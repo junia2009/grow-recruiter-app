@@ -1,0 +1,14 @@
+{
+  "name": "grow-recruiter-app",
+  "version": "0.1.0",
+  "description": "GROW 強み検討（リクルーター向け） - static app tests",
+  "main": "index.html",
+  "scripts": {
+    "test": "node test/smoke.test.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^22.1.0"
+  }
+}

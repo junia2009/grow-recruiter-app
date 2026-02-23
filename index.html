@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GROW 強み検討（リクルーター向け）</title>
+  <style>
+    :root{--bg:#f3f8ff;--card:#ffffff;--accent:#0b76ff;--muted:#66788a;--text:#0b2340}
+    html,body{height:100%}
+    body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Arial;margin:24px;background:linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%);color:var(--text)}
+    .container{max-width:960px;margin:0 auto;background:var(--card);padding:22px;border-radius:12px;box-shadow:0 8px 30px rgba(15,39,70,0.06)}
+    h1{font-size:24px;margin:0 0 6px;color:var(--accent)}
+    .subtitle{color:var(--muted);margin:0 0 14px}
+    label{display:block;margin-top:12px;font-weight:700;color:#123}
+    textarea, input[type=text], select{width:100%;padding:10px;margin-top:6px;border:1px solid #e1ebfb;border-radius:10px;background:#fbfdff;transition:box-shadow .18s,transform .12s}
+    textarea:focus, input[type=text]:focus, select:focus{box-shadow:0 6px 18px rgba(11,118,255,0.08);outline:0;transform:translateY(-1px)}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    .btn{margin-top:12px;padding:9px 14px;border-radius:10px;border:0;background:var(--accent);color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(11,118,255,0.14)}
+    .secondary{background:#eef6ff;color:var(--accent);border:1px solid rgba(11,118,255,0.08)}
+    .sessions{margin-top:18px;padding-top:8px}
+    .session-item{padding:12px;border-radius:10px;background:linear-gradient(180deg,#ffffff,#fbfdff);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 5px 14px rgba(12,41,80,0.03);transition:transform .12s,box-shadow .12s}
+    .session-item:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(12,41,80,0.06)}
+    /* action buttons hidden until hover */
+    .actions button{opacity:0;transform:translateY(6px);transition:opacity .18s,transform .18s}
+    .session-item:hover .actions button{opacity:1;transform:translateY(0)}
+    .session-meta small{color:var(--muted)}
+    .actions button{margin-left:8px}
+    footer{margin-top:20px;font-size:13px;color:#556}
+    .hero{display:flex;align-items:center;gap:18px;padding:14px;border-radius:10px;background:linear-gradient(90deg,#f0f8ff,#fbfdff);margin-bottom:14px}
+    .hero .lead{font-weight:700;color:#08306b}
+    .hero p{margin:6px 0 0;color:var(--muted)}
+    .tryBtn{background:transparent;border:1px solid rgba(11,118,255,0.12);color:var(--accent);padding:8px 12px;border-radius:10px}
+    /* Modal styles */
+    #editModal{position:fixed;left:0;top:0;right:0;bottom:0;display:none;align-items:center;justify-content:center}
+    .modal-overlay{position:absolute;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.35)}
+    .modal{position:relative;z-index:2;background:var(--card);padding:16px;border-radius:10px;max-width:720px;width:94%;box-shadow:0 10px 40px rgba(15,39,70,0.06)}
+    #editModal textarea, #editModal input[type=text]{width:100%;}
+    #historyModal .modal{max-width:600px}
+    .sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+    .theme-select{margin-left:12px;padding:6px 8px;border-radius:8px;border:1px solid #e6eefb;background:#fff}
+    /* ripple */
+    .btn, .secondary { position: relative; overflow: hidden }
+    .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(255,255,255,0.4);pointer-events:none}
+    @keyframes ripple{to{transform:scale(4);opacity:0}}
+    /* toast */
+    #toast{position:fixed;right:20px;bottom:24px;background:#0b76ff;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 30px rgba(11,118,255,0.14);display:none}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div>
+        <h1>GROW 強み検討（リクルーター用）</h1>
+        <div class="subtitle">候補者の強みを整理して、次のアクションにつなげるシンプルなワークシートです。</div>
+        <p style="margin-top:8px"><button id="tryBtn" class="tryBtn" type="button">まずは触ってみる</button></p>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <div style="color:var(--muted);font-size:13px">テーマ</div>
+        <select id="themeSelect" class="theme-select" aria-label="テーマ選択">
+          <option value="default">デフォルト</option>
+          <option value="warm">ウォーム</option>
+          <option value="dark">ダーク</option>
+        </select>
+      </div>
+    </div>
+
+    <label for="candidateSelect">候補者名</label>
+    <div class="row">
+      <div class="col">
+        <select id="candidateSelect"></select>
+      </div>
+      <div class="col" style="flex:0 0 220px;display:flex;gap:8px">
+        <input id="newCandidate" type="text" placeholder="新しい候補者名" aria-label="新しい候補者名" />
+        <button id="addCandidate" class="secondary" type="button">追加</button>
+      </div>
+    </div>
+
+    <label for="goal">Goal（目標）</label>
+    <textarea id="goal" rows="2" placeholder="例: 候補者の強みを活かした役割を提案する"></textarea>
+
+    <label for="reality">Reality（現状）</label>
+    <textarea id="reality" rows="3" placeholder="例: 現職での実績や観察されたスキル"></textarea>
+
+    <label for="options">Options（選択肢／活用案）</label>
+    <textarea id="options" rows="3" placeholder="例: トレーニング、異動、面接での強調点"></textarea>
+
+    <label for="will">Will（次の行動）</label>
+    <textarea id="will" rows="2" placeholder="例: 次回面談で深堀する項目、提案期限"></textarea>
+
+    <div id="formError" role="alert" aria-live="assertive" style="color:#a00;margin-top:8px;display:none"></div>
+
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="save" class="btn">セッションを保存</button>
+      <button id="newSession" class="secondary" type="button">新規クリア</button>
+      <button id="export" class="secondary" type="button">エクスポート（JSON）</button>
+      <button id="exportCSV" class="secondary" type="button">エクスポート（CSV）</button>
+      <button id="printPdf" class="secondary" type="button">PDF（印刷）</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none" />
+      <button id="importBtn" class="secondary" type="button">インポート</button>
+    </div>
+
+    <div class="sessions">
+      <h3>保存セッション</h3>
+      <div id="sessionsList"></div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" style="display:none" aria-hidden="true">
+      <div class="modal-overlay"></div>
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+        <h3 id="editModalTitle">セッション編集</h3>
+        <label for="modalCandidate">候補者名</label>
+        <input id="modalCandidate" type="text" />
+        <label for="modalGoal">Goal（目標）</label>
+        <textarea id="modalGoal" rows="2"></textarea>
+        <label for="modalReality">Reality（現状）</label>
+        <textarea id="modalReality" rows="3"></textarea>
+        <label for="modalOptions">Options（選択肢）</label>
+        <textarea id="modalOptions" rows="3"></textarea>
+        <label for="modalWill">Will（次の行動）</label>
+        <textarea id="modalWill" rows="2"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="modalSave" type="button" class="btn">更新して閉じる</button>
+          <button id="modalCancel" class="secondary" type="button">キャンセル</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" style="display:none" aria-hidden="true">
+      <div class="modal-overlay"></div>
+      <div class="modal">
+        <h3>セッション履歴</h3>
+        <div id="historyList" style="max-height:360px;overflow:auto;margin-top:8px"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="historyClose" class="secondary" type="button">閉じる</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>保存方法: ブラウザのローカル保存（ローカル環境/プライバシー配慮）</div>
+      <div style="margin-top:6px">使い方: 候補者を追加 → G/R/O/W を入力 → 「セッションを保存」</div>
+    </footer>
+  </div>
+
+  <script>
+    const KEY = 'grow_sessions_v1'
+    function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+
+    function load(){
+      try{const v = localStorage.getItem(KEY); return v?JSON.parse(v):[] }catch(e){return[]}
+    }
+    function saveAll(sessions){ localStorage.setItem(KEY, JSON.stringify(sessions)) }
+
+    const candidateSelect = document.getElementById('candidateSelect')
+    const newCandidate = document.getElementById('newCandidate')
+    const addCandidateBtn = document.getElementById('addCandidate')
+    const goal = document.getElementById('goal')
+    const reality = document.getElementById('reality')
+    const optionsEl = document.getElementById('options')
+    const will = document.getElementById('will')
+    const saveBtn = document.getElementById('save')
+    const sessionsList = document.getElementById('sessionsList')
+    const newSessionBtn = document.getElementById('newSession')
+    const exportBtn = document.getElementById('export')
+    const importBtn = document.getElementById('importBtn')
+    const importFile = document.getElementById('importFile')
+    const exportCSVBtn = document.getElementById('exportCSV')
+    const printPdfBtn = document.getElementById('printPdf')
+    const formError = document.getElementById('formError')
+    const themeSelect = document.getElementById('themeSelect')
+
+    // modal elements
+    const editModal = document.getElementById('editModal')
+    const modalCandidate = document.getElementById('modalCandidate')
+    const modalGoal = document.getElementById('modalGoal')
+    const modalReality = document.getElementById('modalReality')
+    const modalOptions = document.getElementById('modalOptions')
+    const modalWill = document.getElementById('modalWill')
+    const modalSave = document.getElementById('modalSave')
+    const modalCancel = document.getElementById('modalCancel')
+    // history modal elements
+    const historyModal = document.getElementById('historyModal')
+    const historyList = document.getElementById('historyList')
+    const historyClose = document.getElementById('historyClose')
+
+    let sessions = load()
+    let currentLoadedId = null
+
+    function candidates(){
+      const set = new Set(sessions.map(s=>s.candidate))
+      return Array.from(set).filter(Boolean)
+    }
+    function renderCandidates(){
+      const list = candidates()
+      candidateSelect.innerHTML = ''
+      const empty = document.createElement('option')
+      empty.value=''
+      empty.textContent='-- 選択してください --'
+      candidateSelect.appendChild(empty)
+      list.forEach(c=>{
+        const o = document.createElement('option'); o.value=c; o.textContent=c; candidateSelect.appendChild(o)
+      })
+    }
+
+    function renderSessions(){
+      sessionsList.innerHTML=''
+      const sel = candidateSelect.value
+      const filtered = sel? sessions.filter(s=>s.candidate===sel) : sessions
+      if(filtered.length===0){
+        sessionsList.innerHTML = '<div style="padding:18px;border-radius:8px;background:#fbfdff;text-align:center;color:#234"><div style="font-weight:700">まだセッションがありません</div><div style="margin-top:8px;color:var(--muted)">候補者を追加して、GROWを試してみましょう</div><div style="margin-top:10px"><button id="emptyTry" class="btn secondary" type="button">候補者を追加して試す</button></div></div>'
+        // attach handler after DOM created
+        setTimeout(()=>{
+          const btn = document.getElementById('emptyTry')
+          if(btn) btn.onclick = ()=>{ newCandidate.focus(); newCandidate.value=''; }
+        },10)
+        return
+      }
+      filtered.slice().reverse().forEach(s=>{
+        const div = document.createElement('div'); div.className='session-item'
+        const left = document.createElement('div')
+        left.innerHTML = `<div class="session-meta"><strong>${s.candidate}</strong> <small>${new Date(s.created).toLocaleString()}</small></div><div style="font-size:13px;color:#334;margin-top:8px">${s.goal||'<i>（Goal未入力）</i>'}</div>`
+        const actions = document.createElement('div'); actions.className='actions'
+        const historyBtn = document.createElement('button'); historyBtn.textContent='履歴'; historyBtn.onclick=()=>openHistoryModal(s.id)
+        const editBtn = document.createElement('button'); editBtn.textContent='編集'; editBtn.onclick=()=>openEditModal(s.id)
+        const loadBtn = document.createElement('button'); loadBtn.textContent='読み込み'; loadBtn.onclick=()=>loadSession(s.id)
+        const delBtn = document.createElement('button'); delBtn.textContent='削除'; delBtn.className='secondary'; delBtn.onclick=()=>deleteSession(s.id)
+        actions.appendChild(historyBtn); actions.appendChild(editBtn); actions.appendChild(loadBtn); actions.appendChild(delBtn)
+        div.appendChild(left); div.appendChild(actions)
+        sessionsList.appendChild(div)
+      })
+    }
+
+    function loadSession(id){
+      const s = sessions.find(x=>x.id===id)
+      if(!s) return
+      currentLoadedId = id
+      candidateSelect.value = s.candidate
+      goal.value = s.goal || ''
+      reality.value = s.reality || ''
+      optionsEl.value = s.options || ''
+      will.value = s.will || ''
+      saveBtn.textContent = 'セッションを更新'
+      renderCandidates(); renderSessions()
+    }
+
+    function openEditModal(id){
+      const s = sessions.find(x=>x.id===id)
+      if(!s) return
+      editModal.style.display = 'flex'
+      editModal.setAttribute('aria-hidden','false')
+      modalCandidate.value = s.candidate || ''
+      modalGoal.value = s.goal || ''
+      modalReality.value = s.reality || ''
+      modalOptions.value = s.options || ''
+      modalWill.value = s.will || ''
+      // attach a one-time save handler
+      modalSave.onclick = ()=>{
+        const idx = sessions.findIndex(x=>x.id===id)
+        if(idx === -1) return alert('セッションが見つかりません')
+        // push previous snapshot into versions
+        sessions[idx].versions = sessions[idx].versions || []
+        sessions[idx].versions.push({
+          savedAt: Date.now(),
+          snapshot: Object.assign({}, sessions[idx])
+        })
+        // update
+        sessions[idx] = Object.assign({}, sessions[idx], {
+          candidate: modalCandidate.value.trim(),
+          goal: modalGoal.value,
+          reality: modalReality.value,
+          options: modalOptions.value,
+          will: modalWill.value
+        })
+        saveAll(sessions)
+        alert('編集内容を保存しました')
+        // if currently loaded in main form, update main form
+        if(currentLoadedId === id){
+          candidateSelect.value = sessions[idx].candidate
+          goal.value = sessions[idx].goal
+          reality.value = sessions[idx].reality
+          optionsEl.value = sessions[idx].options
+          will.value = sessions[idx].will
+        }
+        closeModal()
+        renderCandidates(); renderSessions()
+      }
+      modalCancel.onclick = closeModal
+    }
+
+    function closeModal(){ editModal.style.display='none'; editModal.setAttribute('aria-hidden','true') }
+
+    // History modal
+    function openHistoryModal(id){
+      const s = sessions.find(x=>x.id===id)
+      if(!s) return
+      historyList.innerHTML = ''
+      const versions = (s.versions || []).slice().reverse()
+      if(versions.length === 0){ historyList.innerHTML = '<small>履歴がありません。</small>' }
+      versions.forEach((v, i)=>{
+        const idxFromEnd = versions.length - 1 - i
+        const d = document.createElement('div'); d.style.padding='8px'; d.style.borderBottom='1px solid #eee'
+        const when = new Date(v.savedAt).toLocaleString()
+        d.innerHTML = `<div><strong>${s.candidate}</strong> <small>${when}</small></div><div style="margin-top:6px;font-size:13px;color:#333">${(v.snapshot.goal||'<i>（Goalなし）</i>')}</div>`
+        const btns = document.createElement('div'); btns.style.marginTop='8px'
+        const restore = document.createElement('button'); restore.textContent='復元'; restore.onclick=()=>{
+          if(!confirm('この履歴で現在のセッションを上書きします。よいですか？')) return
+          const sidx = sessions.findIndex(x=>x.id===id)
+          if(sidx === -1) return alert('セッションが見つかりません')
+          // push current into versions
+          sessions[sidx].versions = sessions[sidx].versions || []
+          sessions[sidx].versions.push({ savedAt: Date.now(), snapshot: Object.assign({}, sessions[sidx]) })
+          // restore snapshot
+          const snapshot = v.snapshot
+          sessions[sidx] = Object.assign({}, snapshot)
+          saveAll(sessions)
+          alert('履歴を復元しました')
+          // sync if currently loaded
+          if(currentLoadedId === id){ loadSession(id) }
+          openHistoryModal(id)
+        }
+        const del = document.createElement('button'); del.textContent='削除'; del.className='secondary'; del.onclick=()=>{
+          if(!confirm('このバージョンを削除しますか？')) return
+          // remove specific version (need to find correct index in original versions array)
+          const orig = sessions.find(x=>x.id===id)
+          if(!orig || !orig.versions) return
+          // versions were reversed for view, compute original index
+          const origIdx = orig.versions.length - 1 - i
+          orig.versions.splice(origIdx,1)
+          saveAll(sessions)
+          alert('バージョンを削除しました')
+          openHistoryModal(id)
+        }
+        btns.appendChild(restore); btns.appendChild(del)
+        d.appendChild(btns)
+        historyList.appendChild(d)
+      })
+      historyModal.style.display = 'flex'
+      historyModal.setAttribute('aria-hidden','false')
+    }
+
+    historyClose.onclick = ()=>{ historyModal.style.display='none'; historyModal.setAttribute('aria-hidden','true') }
+
+    // Close modals with Escape
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape'){
+        if(editModal.style.display==='flex') closeModal()
+        if(historyModal.style.display==='flex'){ historyModal.style.display='none'; historyModal.setAttribute('aria-hidden','true') }
+      }
+    })
+
+    function deleteSession(id){
+      if(!confirm('このセッションを削除しますか？')) return
+      sessions = sessions.filter(s=>s.id!==id)
+      // clear loaded if we deleted it
+      if(currentLoadedId === id){ currentLoadedId = null; saveBtn.textContent = 'セッションを保存' }
+      saveAll(sessions); renderCandidates(); renderSessions()
+    }
+
+    addCandidateBtn.onclick = ()=>{
+      const name = newCandidate.value.trim(); if(!name) return alert('候補者名を入力してください');
+      // ensure exists
+      if(!candidates().includes(name)){
+        // create an empty session to register candidate
+        sessions.push({id:uid(),candidate:name,goal:'',reality:'',options:'',will:'',created:Date.now()}); saveAll(sessions)
+      }
+      newCandidate.value=''; renderCandidates(); candidateSelect.value=name; renderSessions()
+    }
+
+    saveBtn.onclick = ()=>{
+      formError.style.display='none'; formError.textContent=''
+      const cand = (candidateSelect.value||'').trim()
+      if(!cand){ formError.style.display='block'; formError.textContent='候補者を選択するか、新規候補者を追加してください。'; candidateSelect.focus(); return }
+      if(currentLoadedId){
+        const idx = sessions.findIndex(x=>x.id===currentLoadedId)
+        if(idx !== -1){
+          sessions[idx] = Object.assign({}, sessions[idx], {candidate:cand, goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value})
+          saveAll(sessions); alert('更新しました')
+        } else {
+          // fallback: create new
+          const s = {id:uid(),candidate:cand,goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value, created:Date.now()}
+          sessions.push(s); saveAll(sessions); alert('保存しました')
+        }
+      } else {
+        const s = {id:uid(),candidate:cand,goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value, created:Date.now()}
+        sessions.push(s); saveAll(sessions); alert('保存しました')
+      }
+      renderCandidates(); candidateSelect.value=cand; renderSessions()
+    }
+
+    newSessionBtn.onclick = ()=>{
+      if(!confirm('フォームをクリアして新規にしますか？')) return
+      goal.value=''; reality.value=''; optionsEl.value=''; will.value=''; currentLoadedId = null; saveBtn.textContent = 'セッションを保存'
+    }
+
+    candidateSelect.onchange = ()=>{ renderSessions() }
+
+    exportBtn.onclick = ()=>{
+      const dataStr = JSON.stringify(sessions, null, 2)
+      const blob = new Blob([dataStr], {type:'application/json'})
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a'); a.href=url; a.download='grow_sessions.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+    }
+
+    importBtn.onclick = ()=> importFile.click()
+    importFile.onchange = (e)=>{
+      const f = e.target.files[0]; if(!f) return;
+      const reader = new FileReader(); reader.onload = ()=>{
+        try{ const parsed = JSON.parse(reader.result); if(Array.isArray(parsed)){ sessions = sessions.concat(parsed); saveAll(sessions); renderCandidates(); renderSessions(); alert('インポート完了') }else alert('無効な形式です') }catch(err){ alert('読み込みエラー') }
+      }; reader.readAsText(f)
+      importFile.value=''
+    }
+
+    // CSV export (filtered by selected candidate if any)
+    function toCSV(rows){
+      const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"'
+      const header = ['id','candidate','created','goal','reality','options','will']
+      const lines = [header.join(',')]
+      rows.forEach(r=>{
+        const row = [r.id, r.candidate, new Date(r.created).toISOString(), r.goal, r.reality, r.options, r.will].map(esc).join(',')
+        lines.push(row)
+      })
+      return lines.join('\n')
+    }
+
+    exportCSVBtn.onclick = ()=>{
+      const sel = candidateSelect.value
+      const rows = sel? sessions.filter(s=>s.candidate===sel) : sessions
+      if(rows.length===0) return alert('エクスポートするセッションがありません')
+      const csv = toCSV(rows)
+      const blob = new Blob([csv], {type:'text/csv'})
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a'); a.href = url; a.download = 'grow_sessions.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+    }
+
+    // Print / PDF: open printable window and call print
+    printPdfBtn.onclick = ()=>{
+      const sel = candidateSelect.value
+      const rows = sel? sessions.filter(s=>s.candidate===sel) : sessions
+      if(rows.length===0) return alert('印刷するセッションがありません')
+      const w = window.open('', '_blank')
+      const html = []
+      html.push('<!doctype html><html><head><meta charset="utf-8"><title>GROW 印刷</title>')
+      html.push('<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px} h1{font-size:18px} .item{border-bottom:1px solid #ddd;padding:12px 0} .meta{color:#666;font-size:13px}</style>')
+      html.push('</head><body>')
+      html.push('<h1>GROW セッション（印刷）</h1>')
+      rows.sort((a,b)=>a.created-b.created).forEach(r=>{
+        html.push('<div class="item">')
+        html.push('<div class="meta"><strong>' + (r.candidate||'') + '</strong> — ' + new Date(r.created).toLocaleString() + '</div>')
+        html.push('<h3>Goal</h3><div>' + (r.goal? r.goal.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
+        html.push('<h3>Reality</h3><div>' + (r.reality? r.reality.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
+        html.push('<h3>Options</h3><div>' + (r.options? r.options.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
+        html.push('<h3>Will</h3><div>' + (r.will? r.will.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
+        html.push('</div>')
+      })
+      html.push('</body></html>')
+      w.document.open(); w.document.write(html.join(''))
+      w.document.close()
+      // give browser a moment to render
+      setTimeout(()=>{ w.focus(); w.print(); }, 350)
+    }
+
+    // try button behavior
+    const tryBtn = document.getElementById('tryBtn')
+    if(tryBtn){ tryBtn.onclick = ()=>{ newCandidate.focus(); newCandidate.value=''; newCandidate.classList.add('pulse'); setTimeout(()=>newCandidate.classList.remove('pulse'),900) } }
+
+    // small pulse animation for focus
+    const s = document.createElement('style')
+    s.textContent = `@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}} .pulse{animation:pulse .85s ease-in-out}`
+    document.head.appendChild(s)
+
+    // ripple effect for buttons
+    function createRipple(e){
+      const el = e.currentTarget
+      const rect = el.getBoundingClientRect()
+      const r = document.createElement('span')
+      r.className = 'ripple'
+      const size = Math.max(rect.width, rect.height)
+      r.style.width = r.style.height = size + 'px'
+      r.style.left = (e.clientX - rect.left - size/2) + 'px'
+      r.style.top = (e.clientY - rect.top - size/2) + 'px'
+      el.appendChild(r)
+      r.style.animation = 'ripple .6s linear'
+      setTimeout(()=> r.remove(), 650)
+    }
+    document.querySelectorAll('.btn, .secondary, .tryBtn').forEach(b=> b.addEventListener('click', createRipple))
+
+    // toast helper
+    const toast = document.createElement('div'); toast.id='toast'; document.body.appendChild(toast)
+    function showToast(msg, ms=1400){ toast.textContent = msg; toast.style.display='block'; toast.style.opacity=''; setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.style.display='none', 350) }, ms) }
+
+    // show toast on save instead of alert
+    const origSave = saveBtn.onclick
+    saveBtn.addEventListener('click', ()=>{
+      // small delay to allow existing handler to run and save
+      setTimeout(()=> showToast('保存しました'), 350)
+    })
+
+    // show toast on update via modal save
+    if(modalSave) modalSave.addEventListener('click', ()=> setTimeout(()=> showToast('編集内容を保存しました'), 350))
+
+    // Theme presets
+    const THEMES = {
+      default: { '--bg':'#f3f8ff','--card':'#ffffff','--accent':'#0b76ff','--muted':'#66788a','--text':'#0b2340' },
+      warm:    { '--bg':'#fff7f0','--card':'#fff6f2','--accent':'#ff6b35','--muted':'#8a6b5b','--text':'#3a2416' },
+      dark:    { '--bg':'#0b1220','--card':'#0f1724','--accent':'#3aa0ff','--muted':'#97a6bf','--text':'#e6f0ff' }
+    }
+    function applyTheme(name){
+      const t = THEMES[name] || THEMES.default
+      Object.keys(t).forEach(k=>document.documentElement.style.setProperty(k,t[k]))
+      // tweak body background for dark
+      if(name==='dark') document.body.style.background = 'linear-gradient(180deg,#071021 0%, #0b1220 100%)'
+      else document.body.style.background = 'linear-gradient(180deg,#f7fbff 0%,var(--bg) 100%)'
+    }
+    // load saved theme
+    const saved = localStorage.getItem('grow_theme') || 'default'
+    themeSelect.value = saved
+    applyTheme(saved)
+    themeSelect.onchange = ()=>{ localStorage.setItem('grow_theme', themeSelect.value); applyTheme(themeSelect.value) }
+
+    // 初期レンダリング
+    renderCandidates(); renderSessions()
+  </script>
+</body>
+</html>
