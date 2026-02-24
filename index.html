@@ -6,17 +6,7 @@
   <title>GROWモデル ワークシート</title>
   <link rel="apple-touch-icon" type="image/png" href="icon.png" />
   <style>
-          .step-panel {
-            padding-bottom: 48px !important;
-          }
-          #growFormPanel {
-            padding-bottom: 48px;
-          }
-      /* アニメーション */
-      .fadein { opacity: 0; transform: translateY(24px); animation: fadein-move 0.8s cubic-bezier(.33,1.02,.54,.99) 0.1s forwards; }
-      .slidein { opacity: 0; transform: translateX(-32px); animation: slidein-move 0.7s cubic-bezier(.33,1.02,.54,.99) 0.2s forwards; }
-      @keyframes fadein-move { to { opacity: 1; transform: none; } }
-      @keyframes slidein-move { to { opacity: 1; transform: none; } }
+    /* ===== Iron Man Dark Theme ===== */
     :root {
       --bg: #0a0a0f;
       --card: rgba(18,18,28,0.92);
@@ -32,287 +22,263 @@
       --input-border: #3a2020;
       --input-focus: rgba(230,36,41,0.25);
       --btn-hover: #b91c20;
-      --secondary: #1a1a28;
+      --secondary-bg: #1a1a28;
     }
-    html,body { height: 100%; }
+    *,*::before,*::after { box-sizing: border-box; }
+    html,body { height: 100%; margin: 0; }
     body {
-      font-family: 'Segoe UI', 'Inter', 'Noto Sans JP', ui-sans-serif, system-ui, Arial, sans-serif;
-      margin: 0;
+      font-family: 'Segoe UI','Inter','Noto Sans JP',ui-sans-serif,system-ui,Arial,sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      letter-spacing: 0.01em;
+      letter-spacing: .01em;
       overflow-x: hidden;
     }
-    /* === Iron Man HUD Background === */
-    #hud-bg {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-    }
-    #hud-bg canvas { width: 100%; height: 100%; }
+
+    /* ===== Animations ===== */
+    .fadein { opacity:0; transform:translateY(24px); animation:fadein-move .8s cubic-bezier(.33,1.02,.54,.99) .1s forwards; }
+    .slidein { opacity:0; transform:translateX(-32px); animation:slidein-move .7s cubic-bezier(.33,1.02,.54,.99) .2s forwards; }
+    @keyframes fadein-move { to { opacity:1; transform:none; } }
+    @keyframes slidein-move { to { opacity:1; transform:none; } }
+    @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.02)} 100%{transform:scale(1)} }
+    .pulse { animation: pulse .85s ease-in-out; }
+
+    /* ===== Iron Man HUD Background ===== */
     .arc-reactor {
-      position: fixed;
-      top: 50%; left: 50%;
-      width: 420px; height: 420px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(79,200,255,0.07) 0%, rgba(79,200,255,0.02) 40%, transparent 70%);
-      box-shadow: 0 0 120px 40px rgba(79,200,255,0.04), inset 0 0 80px 20px rgba(79,200,255,0.03);
-      animation: arc-pulse 4s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
+      position:fixed; top:50%; left:50%;
+      width:420px; height:420px;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(79,200,255,.07) 0%,rgba(79,200,255,.02) 40%,transparent 70%);
+      box-shadow:0 0 120px 40px rgba(79,200,255,.04),inset 0 0 80px 20px rgba(79,200,255,.03);
+      animation:arc-pulse 4s ease-in-out infinite;
+      pointer-events:none; z-index:0;
     }
     @keyframes arc-pulse {
-      0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
-      50% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.08); }
+      0%,100% { opacity:.5; transform:translate(-50%,-50%) scale(1); }
+      50% { opacity:.8; transform:translate(-50%,-50%) scale(1.08); }
     }
     .hud-ring {
-      position: fixed;
-      top: 50%; left: 50%;
-      border-radius: 50%;
-      border: 1px solid rgba(240,192,64,0.08);
-      pointer-events: none; z-index: 0;
+      position:fixed; top:50%; left:50%;
+      border-radius:50%;
+      border:1px solid rgba(240,192,64,.08);
+      pointer-events:none; z-index:0;
     }
-    .hud-ring-1 { width: 600px; height: 600px; transform: translate(-50%,-50%); animation: hud-spin 60s linear infinite; }
-    .hud-ring-2 { width: 500px; height: 500px; transform: translate(-50%,-50%); animation: hud-spin 45s linear infinite reverse; border-color: rgba(230,36,41,0.06); }
-    .hud-ring-3 { width: 320px; height: 320px; transform: translate(-50%,-50%); animation: hud-spin 30s linear infinite; border-color: rgba(79,200,255,0.06); }
-    @keyframes hud-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+    .hud-ring-1 { width:600px; height:600px; transform:translate(-50%,-50%); animation:hud-spin 60s linear infinite; }
+    .hud-ring-2 { width:500px; height:500px; transform:translate(-50%,-50%); animation:hud-spin 45s linear infinite reverse; border-color:rgba(230,36,41,.06); }
+    .hud-ring-3 { width:320px; height:320px; transform:translate(-50%,-50%); animation:hud-spin 30s linear infinite; border-color:rgba(79,200,255,.06); }
+    @keyframes hud-spin { to { transform:translate(-50%,-50%) rotate(360deg); } }
+    .hud-scanline {
+      position:fixed; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent 0%,rgba(79,200,255,.08) 30%,rgba(240,192,64,.06) 70%,transparent 100%);
+      z-index:0; pointer-events:none;
+      animation:scanline 8s linear infinite;
+    }
+    @keyframes scanline { 0%{top:-2px} 100%{top:100vh} }
+    .hud-corner {
+      position:fixed; width:60px; height:60px;
+      pointer-events:none; z-index:0; opacity:.15;
+    }
+    .hud-corner-tl { top:16px; left:16px; border-top:2px solid var(--accent); border-left:2px solid var(--accent); }
+    .hud-corner-tr { top:16px; right:16px; border-top:2px solid var(--accent-gold); border-right:2px solid var(--accent-gold); }
+    .hud-corner-bl { bottom:16px; left:16px; border-bottom:2px solid var(--accent-gold); border-left:2px solid var(--accent-gold); }
+    .hud-corner-br { bottom:16px; right:16px; border-bottom:2px solid var(--accent); border-right:2px solid var(--accent); }
+
+    /* ===== Layout ===== */
     .container {
-      position: relative; z-index: 1;
-      max-width: 820px;
-      margin: 36px auto 0 auto;
-      background: var(--card);
-      padding: 36px 32px 28px 32px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow), 0 0 60px rgba(230,36,41,0.06);
-      border: 1.5px solid var(--border);
-      backdrop-filter: blur(12px);
+      position:relative; z-index:10;
+      max-width:820px;
+      margin:36px auto 0;
+      background:var(--card);
+      padding:36px 32px 28px;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow),0 0 60px rgba(230,36,41,.06);
+      border:1.5px solid var(--border);
+      backdrop-filter:blur(12px);
     }
     h1 {
-      font-size: 2.1rem;
-      margin: 0 0 8px;
-      color: var(--accent);
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-shadow: 0 0 20px rgba(230,36,41,0.3), 0 0 40px rgba(230,36,41,0.1);
+      font-size:2.1rem; margin:0 0 8px;
+      color:var(--accent); font-weight:700;
+      letter-spacing:.04em;
+      text-shadow:0 0 20px rgba(230,36,41,.3),0 0 40px rgba(230,36,41,.1);
     }
-    .subtitle {
-      color: var(--muted);
-      margin: 0 0 18px;
-      font-size: 1.08rem;
+    h3 { color:var(--accent-gold); }
+    .subtitle { color:var(--muted); margin:0 0 18px; font-size:1.08rem; }
+
+    /* ===== Hero ===== */
+    .hero {
+      display:flex; align-items:center; gap:24px;
+      padding:22px 18px 18px;
+      border-radius:var(--radius);
+      background:linear-gradient(135deg,#12121e 0%,#1a0a0a 50%,#12121e 100%);
+      margin-bottom:22px;
+      box-shadow:0 4px 24px rgba(230,36,41,.08),0 0 60px rgba(230,36,41,.04);
+      border:1.2px solid rgba(230,36,41,.15);
     }
+    .hero .lead { font-weight:700; color:var(--accent); }
+    .hero p { margin:8px 0 0; color:var(--muted); }
+
+    /* ===== Form Inputs ===== */
     label {
-      display: block;
-      margin-top: 18px;
-      font-weight: 600;
-      color: var(--label);
-      letter-spacing: 0.01em;
+      display:block; margin-top:18px;
+      font-weight:600; color:var(--label);
+      letter-spacing:.01em;
     }
     textarea, input[type=text], select {
-      width: 100%;
-      padding: 13px 14px;
-      margin-top: 7px;
-      border: 1.5px solid var(--input-border);
-      border-radius: 10px;
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 1rem;
-      transition: box-shadow .18s, border-color .14s, background .14s;
-      outline: none;
-      box-shadow: none;
+      width:100%;
+      padding:13px 14px;
+      margin-top:7px;
+      border:1.5px solid var(--input-border);
+      border-radius:10px;
+      background:var(--input-bg);
+      color:var(--text);
+      font-size:1rem;
+      transition:box-shadow .18s,border-color .14s,background .14s;
+      outline:none; box-shadow:none;
     }
     textarea:focus, input[type=text]:focus, select:focus {
-      border-color: var(--accent);
-      background: #232c3a;
-      box-shadow: 0 0 0 2px var(--input-focus);
+      border-color:var(--accent);
+      background:#232c3a;
+      box-shadow:0 0 0 2px var(--input-focus);
     }
-    .row { display: flex; gap: 14px; }
-    .col { flex: 1; }
+    select {
+      -webkit-appearance:menulist;
+      appearance:menulist;
+      color:var(--text) !important;
+      cursor:pointer;
+    }
+    select option {
+      background:var(--secondary-bg) !important;
+      color:var(--text) !important;
+      padding:10px 14px;
+      font-size:1rem;
+    }
+    select option:checked {
+      background:var(--accent) !important;
+      color:#fff !important;
+    }
+
+    /* ===== Buttons ===== */
     .btn {
-      margin-top: 14px;
-      padding: 11px 22px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(135deg, var(--accent) 0%, #c41e22 100%);
-      color: #fff;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background .14s, transform .12s, box-shadow .12s;
-      box-shadow: 0 2px 16px rgba(230,36,41,0.18);
-      letter-spacing: 0.01em;
+      margin-top:14px; padding:11px 22px;
+      border-radius:10px; border:none;
+      background:linear-gradient(135deg,var(--accent) 0%,#c41e22 100%);
+      color:#fff; font-weight:600; font-size:1rem;
+      cursor:pointer;
+      transition:background .14s,transform .12s,box-shadow .12s;
+      box-shadow:0 2px 16px rgba(230,36,41,.18);
+      letter-spacing:.01em;
+      position:relative; overflow:hidden;
     }
     .btn:hover {
-      background: var(--btn-hover);
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 8px 24px rgba(230,36,41,0.25), 0 0 16px rgba(230,36,41,0.15);
+      background:var(--btn-hover);
+      transform:translateY(-2px) scale(1.03);
+      box-shadow:0 8px 24px rgba(230,36,41,.25),0 0 16px rgba(230,36,41,.15);
     }
     .secondary {
-      background: var(--secondary);
-      color: var(--accent-gold);
-      border: 1.5px solid var(--input-border);
-      font-weight: 500;
-      margin-top: 14px;
-      transition: background .14s, color .14s, border-color .14s;
+      background:var(--secondary-bg);
+      color:var(--accent-gold);
+      border:1.5px solid var(--input-border);
+      font-weight:500; margin-top:14px;
+      cursor:pointer;
+      transition:background .14s,color .14s,border-color .14s;
+      position:relative; overflow:hidden;
     }
     .secondary:hover {
-      background: #1e1420;
-      color: #fff;
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 12px rgba(240,192,64,0.12);
+      background:#1e1420; color:#fff;
+      border-color:var(--accent-gold);
+      box-shadow:0 0 12px rgba(240,192,64,.12);
     }
-    .sessions {
-      margin-top: 28px;
-      padding-top: 10px;
+
+    /* ===== Step Form ===== */
+    .step-panel {
+      padding-bottom:60px !important;
+      position:relative; z-index:2;
     }
+    #growFormPanel { padding-bottom:60px; }
+    .step-panel .row { flex-wrap:wrap; }
+    .step-panel select { position:relative; z-index:10; }
+
+    /* ===== Sessions List ===== */
+    .sessions { margin-top:28px; padding-top:10px; }
     .session-item {
-      padding: 16px 18px;
-      border-radius: 10px;
-      background: linear-gradient(90deg,#12121e 60%,#1a1428 100%);
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.15);
-      border: 1.2px solid var(--input-border);
-      transition: transform .12s, box-shadow .12s, border-color .14s;
+      padding:16px 18px;
+      border-radius:10px;
+      background:linear-gradient(90deg,#12121e 60%,#1a1428 100%);
+      margin-bottom:12px;
+      display:flex; justify-content:space-between; align-items:center;
+      box-shadow:0 5px 18px rgba(0,0,0,.15);
+      border:1.2px solid var(--input-border);
+      transition:transform .12s,box-shadow .12s,border-color .14s;
     }
     .session-item:hover {
-      transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 18px 40px rgba(230,36,41,0.10), 0 0 20px rgba(240,192,64,0.06);
-      border-color: var(--accent);
+      transform:translateY(-4px) scale(1.01);
+      box-shadow:0 18px 40px rgba(230,36,41,.10),0 0 20px rgba(240,192,64,.06);
+      border-color:var(--accent);
     }
     .actions button {
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity .18s, transform .18s;
+      opacity:0; transform:translateY(6px);
+      transition:opacity .18s,transform .18s;
+      margin-left:10px;
     }
-    .session-item:hover .actions button {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .session-meta small {
-      color: var(--muted);
-    }
-    .actions button {
-      margin-left: 10px;
-    }
-    footer {
-      margin-top: 32px;
-      font-size: 13px;
-      color: #7a7e87;
-      text-align: center;
-      letter-spacing: 0.01em;
-    }
-    .hero {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-      padding: 22px 18px 18px 18px;
-      border-radius: var(--radius);
-      background: linear-gradient(135deg,#12121e 0%,#1a0a0a 50%,#12121e 100%);
-      margin-bottom: 22px;
-      box-shadow: 0 4px 24px rgba(230,36,41,0.08), 0 0 60px rgba(230,36,41,0.04);
-      border: 1.2px solid rgba(230,36,41,0.15);
-    }
-    .hero .lead {
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .hero p {
-      margin: 8px 0 0;
-      color: var(--muted);
-    }
-    .tryBtn {
-      background: transparent;
-      border: 1.5px solid var(--accent-gold);
-      color: var(--accent-gold);
-      padding: 9px 16px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: background .14s, color .14s, border-color .14s;
-    }
-    .tryBtn:hover {
-      background: var(--accent-gold);
-      color: #0a0a0f;
-      border-color: #fff;
-    }
-    /* Modal styles */
-    #editModal {
-      position: fixed; left: 0; top: 0; right: 0; bottom: 0;
-      display: none; align-items: center; justify-content: center;
-      z-index: 1000;
+    .session-item:hover .actions button { opacity:1; transform:translateY(0); }
+    .session-meta small { color:var(--muted); }
+
+    /* ===== Modals ===== */
+    .modal-wrapper {
+      position:fixed; left:0; top:0; right:0; bottom:0;
+      display:none; align-items:center; justify-content:center;
+      z-index:1000;
     }
     .modal-overlay {
-      position: absolute; left: 0; top: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.45);
+      position:absolute; left:0; top:0; right:0; bottom:0;
+      background:rgba(0,0,0,.55);
     }
     .modal {
-      position: relative; z-index: 2;
-      background: var(--card);
-      padding: 22px 18px;
-      border-radius: var(--radius);
-      max-width: 720px; width: 94%;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.18);
-      border: 1.2px solid var(--input-border);
+      position:relative; z-index:2;
+      background:var(--card);
+      padding:22px 18px;
+      border-radius:var(--radius);
+      max-width:720px; width:94%;
+      box-shadow:0 10px 40px rgba(0,0,0,.18);
+      border:1.2px solid var(--input-border);
     }
-    #editModal textarea, #editModal input[type=text] { width: 100%; }
-    #historyModal .modal { max-width: 600px; }
-    .sr-only {
-      position: absolute!important; height: 1px; width: 1px; overflow: hidden;
-      clip: rect(1px,1px,1px,1px); white-space: nowrap;
-    }
-    .theme-select {
-      margin-left: 12px; padding: 7px 10px;
-      border-radius: 8px;
-      border: 1.5px solid var(--input-border);
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 1rem;
-      transition: border-color .14s, background .14s;
-    }
-    .theme-select:focus {
-      border-color: var(--accent);
-      background: #232c3a;
-    }
-    /* ripple */
-    .btn, .secondary { position: relative; overflow: hidden }
+    .modal textarea, .modal input[type=text] { width:100%; }
+    #historyModal .modal { max-width:600px; }
+
+    /* ===== Ripple ===== */
     .ripple {
-      position: absolute; border-radius: 50%; transform: scale(0);
-      background: rgba(255,255,255,0.18); pointer-events: none;
+      position:absolute; border-radius:50%; transform:scale(0);
+      background:rgba(255,255,255,.18); pointer-events:none;
     }
-    @keyframes ripple { to { transform: scale(4); opacity: 0 } }
-    /* toast */
+    @keyframes ripple { to { transform:scale(4); opacity:0; } }
+
+    /* ===== Toast ===== */
     #toast {
-      position: fixed; right: 20px; bottom: 24px;
-      background: linear-gradient(135deg, var(--accent) 0%, #c41e22 100%);
-      color: #fff;
-      padding: 12px 18px; border-radius: 10px;
-      box-shadow: 0 8px 30px rgba(230,36,41,0.25);
-      display: none;
-      font-size: 1rem;
-      z-index: 2000;
+      position:fixed; right:20px; bottom:24px;
+      background:linear-gradient(135deg,var(--accent) 0%,#c41e22 100%);
+      color:#fff; padding:12px 18px; border-radius:10px;
+      box-shadow:0 8px 30px rgba(230,36,41,.25);
+      display:none; font-size:1rem; z-index:2000;
+      transition:opacity .35s;
     }
-    /* HUD scan line */
-    .hud-scanline {
-      position: fixed; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent 0%, rgba(79,200,255,0.08) 30%, rgba(240,192,64,0.06) 70%, transparent 100%);
-      z-index: 0; pointer-events: none;
-      animation: scanline 8s linear infinite;
+
+    /* ===== Misc ===== */
+    .row { display:flex; gap:14px; }
+    .col { flex:1; }
+    footer { margin-top:32px; font-size:13px; color:#7a7e87; text-align:center; }
+    .sr-only {
+      position:absolute!important; height:1px; width:1px; overflow:hidden;
+      clip:rect(1px,1px,1px,1px); white-space:nowrap;
     }
-    @keyframes scanline {
-      0% { top: -2px; }
-      100% { top: 100vh; }
+    .empty-state {
+      padding:24px; border-radius:10px;
+      background:linear-gradient(135deg,#12121e,#1a1428);
+      text-align:center;
+      border:1.2px solid var(--input-border);
     }
-    /* Corner HUD decorations */
-    .hud-corner {
-      position: fixed; width: 60px; height: 60px;
-      pointer-events: none; z-index: 0; opacity: 0.15;
-    }
-    .hud-corner-tl { top: 16px; left: 16px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
-    .hud-corner-tr { top: 16px; right: 16px; border-top: 2px solid var(--accent-gold); border-right: 2px solid var(--accent-gold); }
-    .hud-corner-bl { bottom: 16px; left: 16px; border-bottom: 2px solid var(--accent-gold); border-left: 2px solid var(--accent-gold); }
-    .hud-corner-br { bottom: 16px; right: 16px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+    .empty-state .empty-title { font-weight:700; color:var(--accent-gold); font-size:1.05rem; }
+    .empty-state .empty-sub { margin-top:8px; color:var(--muted); }
   </style>
 </head>
 <body>
@@ -327,64 +293,66 @@
   <div class="hud-corner hud-corner-bl"></div>
   <div class="hud-corner hud-corner-br"></div>
   <canvas id="hudCanvas"></canvas>
+
   <div class="container fadein">
+    <!-- Hero -->
     <div class="hero slidein">
       <div>
         <h1>GROWモデル ワークシート</h1>
         <div class="subtitle">目標達成に向けて現状を整理し、具体的な行動を検討するためのシンプルなワークシートです。</div>
-              <p style="margin-top:18px; display:flex; gap:12px; align-items:center;">
-                <button id="openFormBtn" class="btn" type="button">フォームを開く</button>
-                <button id="reloadBtn" class="btn secondary" type="button">トップへボタン</button>
-              </p>
-      </div>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-        <!-- テーマ選択UI削除 -->
+        <p style="margin-top:18px;display:flex;gap:12px;align-items:center;">
+          <button id="openFormBtn" class="btn" type="button">フォームを開く</button>
+          <button id="reloadBtn" class="secondary" type="button" onclick="location.reload()">トップへボタン</button>
+        </p>
       </div>
     </div>
 
+    <!-- Step Form Panel -->
     <div id="growFormPanel" class="fadein" style="max-height:0;overflow:hidden;transition:max-height .7s cubic-bezier(.33,1.02,.54,.99),opacity .5s;opacity:0;">
       <form id="stepForm" autocomplete="off" style="margin:0;">
-        <div id="stepIndicator" class="step-indicator"></div>
-        <div class="step-panel step-0 animated-step" style="display:none">
-          <label for="candidateSelect">候補者名</label>
-          <div class="row">
-            <div class="col">
-              <select id="candidateSelect"></select>
-            </div>
-            <div class="col" style="flex:0 0 220px;display:flex;gap:8px">
-              <input id="newCandidate" type="text" placeholder="新しい候補者名" aria-label="新しい候補者名" />
-              <button id="addCandidate" class="secondary" type="button">追加</button>
-            </div>
+        <!-- Step 0: 候補者選択 -->
+        <div class="step-panel step-0" style="display:none">
+          <label for="candidateSelect">候補者名（既存から選択）</label>
+          <select id="candidateSelect" style="margin-bottom:14px;"></select>
+          <label style="margin-top:10px;">新しい候補者を追加</label>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:6px;">
+            <input id="newCandidate" type="text" placeholder="新しい候補者名" aria-label="新しい候補者名" style="flex:1;" />
+            <button id="addCandidate" class="secondary" type="button" style="white-space:nowrap;margin-top:0;padding:12px 20px;">追加</button>
           </div>
-          <div class="step-btn-wrap" style="margin-bottom: 36px;"><button type="button" class="btn next-btn step-next-main">次へ</button></div>
+          <div style="margin-top:24px;margin-bottom:36px;">
+            <button type="button" class="btn next-btn">次へ</button>
+          </div>
         </div>
-        <div class="step-panel step-1 animated-step" style="display:none">
+        <!-- Step 1: Goal -->
+        <div class="step-panel step-1" style="display:none">
           <label for="goal">Goal（目標）</label>
-          <textarea id="goal" rows="2" placeholder="例: 候補者の強みを活かした役割を提案する"></textarea>
-          <div class="step-btn-wrap">
-            <button type="button" class="btn next-btn step-next-main">次へ</button>
+          <textarea id="goal" rows="2" placeholder="例: 強みを活かした役割を提案する"></textarea>
+          <div style="margin-top:18px;">
+            <button type="button" class="btn next-btn">次へ</button>
           </div>
         </div>
-        <div class="step-panel step-2 animated-step" style="display:none">
+        <!-- Step 2: Reality -->
+        <div class="step-panel step-2" style="display:none">
           <label for="reality">Reality（現状）</label>
           <textarea id="reality" rows="3" placeholder="例: 現職での実績や観察されたスキル"></textarea>
-          <div class="step-btn-wrap">
-            <button type="button" class="btn next-btn step-next-main">次へ</button>
+          <div style="margin-top:18px;">
+            <button type="button" class="btn next-btn">次へ</button>
           </div>
         </div>
-        <div class="step-panel step-3 animated-step" style="display:none">
+        <!-- Step 3: Options -->
+        <div class="step-panel step-3" style="display:none">
           <label for="options">Options（選択肢／活用案）</label>
           <textarea id="options" rows="3" placeholder="例: トレーニング、異動、面接での強調点"></textarea>
-          <div class="step-btn-wrap">
-            <button type="button" class="btn next-btn step-next-main">次へ</button>
+          <div style="margin-top:18px;">
+            <button type="button" class="btn next-btn">次へ</button>
           </div>
         </div>
-        <div class="step-panel step-4 animated-step" style="display:none">
+        <!-- Step 4: Will + 保存 -->
+        <div class="step-panel step-4" style="display:none">
           <label for="will">Will（次の行動）</label>
           <textarea id="will" rows="2" placeholder="例: 次回面談で深堀する項目、提案期限"></textarea>
-          <div class="step-btn-wrap" style="margin-bottom:36px;"></div>
-          <div id="formError" role="alert" aria-live="assertive" style="color:#a00;margin-top:8px;display:none"></div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:12px;">
+          <div id="formError" role="alert" aria-live="assertive" style="color:var(--accent);margin-top:8px;display:none;font-weight:600;"></div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;margin-bottom:36px;">
             <button id="save" class="btn" type="button">セッションを保存</button>
             <button id="newSession" class="secondary" type="button">新規クリア</button>
             <button id="export" class="secondary" type="button">エクスポート（JSON）</button>
@@ -397,13 +365,14 @@
       </form>
     </div>
 
+    <!-- Sessions -->
     <div class="sessions">
       <h3>保存セッション</h3>
       <div id="sessionsList"></div>
     </div>
 
     <!-- Edit Modal -->
-    <div id="editModal" style="display:none" aria-hidden="true">
+    <div id="editModal" class="modal-wrapper" aria-hidden="true">
       <div class="modal-overlay"></div>
       <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
         <h3 id="editModalTitle">セッション編集</h3>
@@ -425,7 +394,7 @@
     </div>
 
     <!-- History Modal -->
-    <div id="historyModal" style="display:none" aria-hidden="true">
+    <div id="historyModal" class="modal-wrapper" aria-hidden="true">
       <div class="modal-overlay"></div>
       <div class="modal">
         <h3>セッション履歴</h3>
@@ -435,417 +404,469 @@
         </div>
       </div>
     </div>
+  </div><!-- /.container -->
 
   <script>
-    const KEY = 'grow_sessions_v1'
-    function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+  (function(){
+    'use strict';
 
+    // ===== Storage =====
+    const KEY = 'grow_sessions_v1';
+    function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
     function load(){
-      try{const v = localStorage.getItem(KEY); return v?JSON.parse(v):[] }catch(e){return[]}
+      try { const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : []; }
+      catch(e){ console.warn('[GROW] localStorage load error:', e); return []; }
     }
-    function saveAll(sessions){ localStorage.setItem(KEY, JSON.stringify(sessions)) }
+    function saveAll(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
 
-    const candidateSelect = document.getElementById('candidateSelect')
-    const newCandidate = document.getElementById('newCandidate')
-    const addCandidateBtn = document.getElementById('addCandidate')
-    const goal = document.getElementById('goal')
-    const reality = document.getElementById('reality')
-    const optionsEl = document.getElementById('options')
-    const will = document.getElementById('will')
-    const saveBtn = document.getElementById('save')
-    const sessionsList = document.getElementById('sessionsList')
-    const newSessionBtn = document.getElementById('newSession')
-    const exportBtn = document.getElementById('export')
-    const importBtn = document.getElementById('importBtn')
-    const importFile = document.getElementById('importFile')
-    const exportCSVBtn = document.getElementById('exportCSV')
-    const printPdfBtn = document.getElementById('printPdf')
-    const formError = document.getElementById('formError')
-    const themeSelect = document.getElementById('themeSelect')
+    // ===== DOM References =====
+    const $ = id => document.getElementById(id);
+    const candidateSelect = $('candidateSelect');
+    const newCandidateInput = $('newCandidate');
+    const addCandidateBtn = $('addCandidate');
+    const goalEl = $('goal');
+    const realityEl = $('reality');
+    const optionsEl = $('options');
+    const willEl = $('will');
+    const saveBtn = $('save');
+    const sessionsListEl = $('sessionsList');
+    const newSessionBtn = $('newSession');
+    const exportBtn = $('export');
+    const importBtn = $('importBtn');
+    const importFile = $('importFile');
+    const exportCSVBtn = $('exportCSV');
+    const printPdfBtn = $('printPdf');
+    const formError = $('formError');
+    const growFormPanel = $('growFormPanel');
+    const openFormBtn = $('openFormBtn');
 
-    // modal elements
-    const editModal = document.getElementById('editModal')
-    const modalCandidate = document.getElementById('modalCandidate')
-    const modalGoal = document.getElementById('modalGoal')
-    const modalReality = document.getElementById('modalReality')
-    const modalOptions = document.getElementById('modalOptions')
-    const modalWill = document.getElementById('modalWill')
-    const modalSave = document.getElementById('modalSave')
-    const modalCancel = document.getElementById('modalCancel')
-    // history modal elements
-    const historyModal = document.getElementById('historyModal')
-    const historyList = document.getElementById('historyList')
-    const historyClose = document.getElementById('historyClose')
+    // Modal elements
+    const editModal = $('editModal');
+    const modalCandidate = $('modalCandidate');
+    const modalGoal = $('modalGoal');
+    const modalReality = $('modalReality');
+    const modalOptions = $('modalOptions');
+    const modalWill = $('modalWill');
+    const modalSave = $('modalSave');
+    const modalCancel = $('modalCancel');
+    const historyModal = $('historyModal');
+    const historyList = $('historyList');
+    const historyClose = $('historyClose');
 
-    let sessions = load()
-    let currentLoadedId = null
+    // ===== State =====
+    let sessions = load();
+    let currentLoadedId = null;
+    let formOpen = false;
+    let currentStep = 0;
+    let stepPanels = [];
 
-    function candidates(){
-      const set = new Set(sessions.map(s=>s.candidate))
-      return Array.from(set).filter(Boolean)
+    console.log('[GROW] Initialized. Sessions loaded:', sessions.length);
+
+    // ===== Candidates =====
+    function getCandidates(){
+      return Array.from(new Set(sessions.map(s => s.candidate).filter(Boolean)));
     }
+
     function renderCandidates(){
-      const list = candidates()
-      candidateSelect.innerHTML = ''
-      const empty = document.createElement('option')
-      empty.value=''
-      empty.textContent='-- 選択してください --'
-      candidateSelect.appendChild(empty)
-      list.forEach(c=>{
-        const o = document.createElement('option'); o.value=c; o.textContent=c; candidateSelect.appendChild(o)
-      })
+      const list = getCandidates();
+      console.log('[GROW] renderCandidates:', list.length, 'candidates from', sessions.length, 'sessions');
+      candidateSelect.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = list.length > 0 ? '-- 選択してください --' : '-- 候補者がいません（下から追加） --';
+      candidateSelect.appendChild(placeholder);
+      list.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        candidateSelect.appendChild(opt);
+      });
     }
 
+    // ===== Sessions List =====
     function renderSessions(){
-      sessionsList.innerHTML=''
-      const sel = candidateSelect.value
-      const filtered = sel? sessions.filter(s=>s.candidate===sel) : sessions
-      if(filtered.length===0){
-        sessionsList.innerHTML = '<div style="padding:18px;border-radius:8px;background:#fbfdff;text-align:center;color:#234"><div style="font-weight:700">まだセッションがありません</div><div style="margin-top:8px;color:var(--muted)">候補者を追加して、GROWを試してみましょう</div><div style="margin-top:10px"><button id="emptyTry" class="btn secondary" type="button">候補者を追加して試す</button></div></div>'
-        // attach handler after DOM created
-        setTimeout(()=>{
-          const btn = document.getElementById('emptyTry')
-          if(btn) btn.onclick = ()=>{ newCandidate.focus(); newCandidate.value=''; }
-        },10)
-        return
+      sessionsListEl.innerHTML = '';
+      const sel = candidateSelect.value;
+      const filtered = sel ? sessions.filter(s => s.candidate === sel) : sessions;
+
+      if(filtered.length === 0){
+        sessionsListEl.innerHTML =
+          '<div class="empty-state">' +
+            '<div class="empty-title">まだセッションがありません</div>' +
+            '<div class="empty-sub">候補者を追加して、GROWを試してみましょう</div>' +
+            '<div style="margin-top:12px"><button id="emptyTry" class="secondary" type="button">候補者を追加して試す</button></div>' +
+          '</div>';
+        setTimeout(function(){
+          var btn = document.getElementById('emptyTry');
+          if(btn) btn.onclick = function(){ if(newCandidateInput){ newCandidateInput.focus(); newCandidateInput.value=''; } };
+        }, 10);
+        return;
       }
-      filtered.slice().reverse().forEach(s=>{
-        const div = document.createElement('div'); div.className='session-item'
-        const left = document.createElement('div')
-        left.innerHTML = `<div class="session-meta"><strong>${s.candidate}</strong> <small>${new Date(s.created).toLocaleString()}</small></div><div style="font-size:13px;color:#334;margin-top:8px">${s.goal||'<i>（Goal未入力）</i>'}</div>`
-        const actions = document.createElement('div'); actions.className='actions'
-        const historyBtn = document.createElement('button'); historyBtn.textContent='履歴'; historyBtn.onclick=()=>openHistoryModal(s.id)
-        const editBtn = document.createElement('button'); editBtn.textContent='編集'; editBtn.onclick=()=>openEditModal(s.id)
-        const loadBtn = document.createElement('button'); loadBtn.textContent='読み込み'; loadBtn.onclick=()=>loadSession(s.id)
-        const delBtn = document.createElement('button'); delBtn.textContent='削除'; delBtn.className='secondary'; delBtn.onclick=()=>deleteSession(s.id)
-        actions.appendChild(historyBtn); actions.appendChild(editBtn); actions.appendChild(loadBtn); actions.appendChild(delBtn)
-        div.appendChild(left); div.appendChild(actions)
-        sessionsList.appendChild(div)
-      })
+
+      filtered.slice().reverse().forEach(function(s){
+        var div = document.createElement('div'); div.className = 'session-item';
+        var left = document.createElement('div');
+        left.innerHTML =
+          '<div class="session-meta"><strong>' + s.candidate + '</strong> <small>' + new Date(s.created).toLocaleString() + '</small></div>' +
+          '<div style="font-size:13px;color:var(--muted);margin-top:8px">' + (s.goal || '<i>（Goal未入力）</i>') + '</div>';
+        var actions = document.createElement('div'); actions.className = 'actions';
+
+        var histBtn = document.createElement('button'); histBtn.textContent = '履歴';
+        histBtn.onclick = (function(id){ return function(){ openHistoryModal(id); }; })(s.id);
+        var editBtn = document.createElement('button'); editBtn.textContent = '編集';
+        editBtn.onclick = (function(id){ return function(){ openEditModal(id); }; })(s.id);
+        var loadBtn = document.createElement('button'); loadBtn.textContent = '読み込み';
+        loadBtn.onclick = (function(id){ return function(){ loadSession(id); }; })(s.id);
+        var delBtn = document.createElement('button'); delBtn.textContent = '削除'; delBtn.className = 'secondary';
+        delBtn.onclick = (function(id){ return function(){ deleteSession(id); }; })(s.id);
+
+        actions.appendChild(histBtn); actions.appendChild(editBtn);
+        actions.appendChild(loadBtn); actions.appendChild(delBtn);
+        div.appendChild(left); div.appendChild(actions);
+        sessionsListEl.appendChild(div);
+      });
     }
 
+    // ===== Session Actions =====
     function loadSession(id){
-      const s = sessions.find(x=>x.id===id)
-      if(!s) return
-      currentLoadedId = id
-      candidateSelect.value = s.candidate
-      goal.value = s.goal || ''
-      reality.value = s.reality || ''
-      optionsEl.value = s.options || ''
-      will.value = s.will || ''
-      saveBtn.textContent = 'セッションを更新'
-      renderCandidates(); renderSessions()
+      var s = sessions.find(function(x){ return x.id === id; });
+      if(!s) return;
+      currentLoadedId = id;
+      renderCandidates();
+      candidateSelect.value = s.candidate;
+      goalEl.value = s.goal || '';
+      realityEl.value = s.reality || '';
+      optionsEl.value = s.options || '';
+      willEl.value = s.will || '';
+      saveBtn.textContent = 'セッションを更新';
+      renderSessions();
     }
 
+    function deleteSession(id){
+      if(!confirm('このセッションを削除しますか？')) return;
+      sessions = sessions.filter(function(s){ return s.id !== id; });
+      if(currentLoadedId === id){ currentLoadedId = null; saveBtn.textContent = 'セッションを保存'; }
+      saveAll(sessions); renderCandidates(); renderSessions();
+    }
+
+    // ===== Edit Modal =====
     function openEditModal(id){
-      const s = sessions.find(x=>x.id===id)
-      if(!s) return
-      editModal.style.display = 'flex'
-      editModal.setAttribute('aria-hidden','false')
-      modalCandidate.value = s.candidate || ''
-      modalGoal.value = s.goal || ''
-      modalReality.value = s.reality || ''
-      modalOptions.value = s.options || ''
-      modalWill.value = s.will || ''
-      // attach a one-time save handler
-      modalSave.onclick = ()=>{
-        const idx = sessions.findIndex(x=>x.id===id)
-        if(idx === -1) return alert('セッションが見つかりません')
-        // push previous snapshot into versions
-        sessions[idx].versions = sessions[idx].versions || []
-        sessions[idx].versions.push({
-          savedAt: Date.now(),
-          snapshot: Object.assign({}, sessions[idx])
-        })
-        // update
+      var s = sessions.find(function(x){ return x.id === id; });
+      if(!s) return;
+      editModal.style.display = 'flex';
+      editModal.setAttribute('aria-hidden','false');
+      modalCandidate.value = s.candidate || '';
+      modalGoal.value = s.goal || '';
+      modalReality.value = s.reality || '';
+      modalOptions.value = s.options || '';
+      modalWill.value = s.will || '';
+
+      modalSave.onclick = function(){
+        var idx = sessions.findIndex(function(x){ return x.id === id; });
+        if(idx === -1) return alert('セッションが見つかりません');
+        sessions[idx].versions = sessions[idx].versions || [];
+        sessions[idx].versions.push({ savedAt: Date.now(), snapshot: Object.assign({}, sessions[idx]) });
         sessions[idx] = Object.assign({}, sessions[idx], {
           candidate: modalCandidate.value.trim(),
           goal: modalGoal.value,
           reality: modalReality.value,
           options: modalOptions.value,
           will: modalWill.value
-        })
-        saveAll(sessions)
-        alert('編集内容を保存しました')
-        // if currently loaded in main form, update main form
+        });
+        saveAll(sessions);
+        showToast('編集内容を保存しました');
         if(currentLoadedId === id){
-          candidateSelect.value = sessions[idx].candidate
-          goal.value = sessions[idx].goal
-          reality.value = sessions[idx].reality
-          optionsEl.value = sessions[idx].options
-          will.value = sessions[idx].will
+          candidateSelect.value = sessions[idx].candidate;
+          goalEl.value = sessions[idx].goal;
+          realityEl.value = sessions[idx].reality;
+          optionsEl.value = sessions[idx].options;
+          willEl.value = sessions[idx].will;
         }
-        closeModal()
-        renderCandidates(); renderSessions()
-      }
-      modalCancel.onclick = closeModal
+        closeEditModal();
+        renderCandidates(); renderSessions();
+      };
+      modalCancel.onclick = closeEditModal;
     }
+    function closeEditModal(){ editModal.style.display = 'none'; editModal.setAttribute('aria-hidden','true'); }
 
-    function closeModal(){ editModal.style.display='none'; editModal.setAttribute('aria-hidden','true') }
-
-    // History modal
+    // ===== History Modal =====
     function openHistoryModal(id){
-      const s = sessions.find(x=>x.id===id)
-      if(!s) return
-      historyList.innerHTML = ''
-      const versions = (s.versions || []).slice().reverse()
-      if(versions.length === 0){ historyList.innerHTML = '<small>履歴がありません。</small>' }
-      versions.forEach((v, i)=>{
-        const idxFromEnd = versions.length - 1 - i
-        const d = document.createElement('div'); d.style.padding='8px'; d.style.borderBottom='1px solid #eee'
-        const when = new Date(v.savedAt).toLocaleString()
-        d.innerHTML = `<div><strong>${s.candidate}</strong> <small>${when}</small></div><div style="margin-top:6px;font-size:13px;color:#333">${(v.snapshot.goal||'<i>（Goalなし）</i>')}</div>`
-        const btns = document.createElement('div'); btns.style.marginTop='8px'
-        const restore = document.createElement('button'); restore.textContent='復元'; restore.onclick=()=>{
-          if(!confirm('この履歴で現在のセッションを上書きします。よいですか？')) return
-          const sidx = sessions.findIndex(x=>x.id===id)
-          if(sidx === -1) return alert('セッションが見つかりません')
-          // push current into versions
-          sessions[sidx].versions = sessions[sidx].versions || []
-          sessions[sidx].versions.push({ savedAt: Date.now(), snapshot: Object.assign({}, sessions[sidx]) })
-          // restore snapshot
-          const snapshot = v.snapshot
-          sessions[sidx] = Object.assign({}, snapshot)
-          saveAll(sessions)
-          alert('履歴を復元しました')
-          // sync if currently loaded
-          if(currentLoadedId === id){ loadSession(id) }
-          openHistoryModal(id)
-        }
-        const del = document.createElement('button'); del.textContent='削除'; del.className='secondary'; del.onclick=()=>{
-          if(!confirm('このバージョンを削除しますか？')) return
-          // remove specific version (need to find correct index in original versions array)
-          const orig = sessions.find(x=>x.id===id)
-          if(!orig || !orig.versions) return
-          // versions were reversed for view, compute original index
-          const origIdx = orig.versions.length - 1 - i
-          orig.versions.splice(origIdx,1)
-          saveAll(sessions)
-          alert('バージョンを削除しました')
-          openHistoryModal(id)
-        }
-        btns.appendChild(restore); btns.appendChild(del)
-        d.appendChild(btns)
-        historyList.appendChild(d)
-      })
-      historyModal.style.display = 'flex'
-      historyModal.setAttribute('aria-hidden','false')
+      var s = sessions.find(function(x){ return x.id === id; });
+      if(!s) return;
+      historyList.innerHTML = '';
+      var versions = (s.versions || []).slice().reverse();
+      if(versions.length === 0){
+        historyList.innerHTML = '<div style="color:var(--muted);padding:12px;">履歴がありません。</div>';
+      }
+      versions.forEach(function(v, i){
+        var d = document.createElement('div');
+        d.style.cssText = 'padding:10px;border-bottom:1px solid var(--input-border);';
+        var when = new Date(v.savedAt).toLocaleString();
+        d.innerHTML =
+          '<div><strong style="color:var(--accent-gold)">' + s.candidate + '</strong> <small style="color:var(--muted)">' + when + '</small></div>' +
+          '<div style="margin-top:6px;font-size:13px;color:var(--text)">' + (v.snapshot.goal || '<i style="color:var(--muted)">（Goalなし）</i>') + '</div>';
+        var btns = document.createElement('div'); btns.style.marginTop = '8px';
+        var restoreBtn = document.createElement('button'); restoreBtn.textContent = '復元'; restoreBtn.className = 'btn';
+        restoreBtn.style.cssText = 'padding:6px 14px;font-size:.9rem;margin-top:0;';
+        restoreBtn.onclick = (function(idx){ return function(){
+          if(!confirm('この履歴で現在のセッションを上書きします。よいですか？')) return;
+          var sidx = sessions.findIndex(function(x){ return x.id === id; });
+          if(sidx === -1) return alert('セッションが見つかりません');
+          sessions[sidx].versions = sessions[sidx].versions || [];
+          sessions[sidx].versions.push({ savedAt: Date.now(), snapshot: Object.assign({}, sessions[sidx]) });
+          var snapshot = versions[idx].snapshot;
+          sessions[sidx] = Object.assign({}, snapshot);
+          saveAll(sessions);
+          showToast('履歴を復元しました');
+          if(currentLoadedId === id) loadSession(id);
+          openHistoryModal(id);
+        }; })(i);
+        var delVerBtn = document.createElement('button'); delVerBtn.textContent = '削除'; delVerBtn.className = 'secondary';
+        delVerBtn.style.cssText = 'padding:6px 14px;font-size:.9rem;margin-top:0;margin-left:8px;';
+        delVerBtn.onclick = (function(idx){ return function(){
+          if(!confirm('このバージョンを削除しますか？')) return;
+          var orig = sessions.find(function(x){ return x.id === id; });
+          if(!orig || !orig.versions) return;
+          var origIdx = orig.versions.length - 1 - idx;
+          orig.versions.splice(origIdx, 1);
+          saveAll(sessions);
+          showToast('バージョンを削除しました');
+          openHistoryModal(id);
+        }; })(i);
+        btns.appendChild(restoreBtn); btns.appendChild(delVerBtn);
+        d.appendChild(btns);
+        historyList.appendChild(d);
+      });
+      historyModal.style.display = 'flex';
+      historyModal.setAttribute('aria-hidden','false');
     }
 
-    historyClose.onclick = ()=>{ historyModal.style.display='none'; historyModal.setAttribute('aria-hidden','true') }
+    historyClose.onclick = function(){
+      historyModal.style.display = 'none';
+      historyModal.setAttribute('aria-hidden','true');
+    };
 
     // Close modals with Escape
-    document.addEventListener('keydown', (e)=>{
+    document.addEventListener('keydown', function(e){
       if(e.key === 'Escape'){
-        if(editModal.style.display==='flex') closeModal()
-        if(historyModal.style.display==='flex'){ historyModal.style.display='none'; historyModal.setAttribute('aria-hidden','true') }
+        if(editModal.style.display === 'flex') closeEditModal();
+        if(historyModal.style.display === 'flex'){
+          historyModal.style.display = 'none';
+          historyModal.setAttribute('aria-hidden','true');
+        }
       }
-    })
+    });
 
-    function deleteSession(id){
-      if(!confirm('このセッションを削除しますか？')) return
-      sessions = sessions.filter(s=>s.id!==id)
-      // clear loaded if we deleted it
-      if(currentLoadedId === id){ currentLoadedId = null; saveBtn.textContent = 'セッションを保存' }
-      saveAll(sessions); renderCandidates(); renderSessions()
-    }
-
-    addCandidateBtn.onclick = ()=>{
-      const name = newCandidate.value.trim(); if(!name) return alert('候補者名を入力してください');
-      // ensure exists
-      if(!candidates().includes(name)){
-        // create an empty session to register candidate
-        sessions.push({id:uid(),candidate:name,goal:'',reality:'',options:'',will:'',created:Date.now()}); saveAll(sessions)
+    // ===== Add Candidate =====
+    addCandidateBtn.onclick = function(){
+      var name = newCandidateInput.value.trim();
+      if(!name) return alert('候補者名を入力してください');
+      if(!getCandidates().includes(name)){
+        sessions.push({ id: uid(), candidate: name, goal:'', reality:'', options:'', will:'', created: Date.now() });
+        saveAll(sessions);
       }
-      newCandidate.value=''; renderCandidates(); candidateSelect.value=name; renderSessions()
-    }
+      newCandidateInput.value = '';
+      renderCandidates();
+      candidateSelect.value = name;
+      renderSessions();
+      showToast(name + ' を追加しました');
+    };
 
-    saveBtn.onclick = ()=>{
-      formError.style.display='none'; formError.textContent=''
-      const cand = (candidateSelect.value||'').trim()
-      if(!cand){ formError.style.display='block'; formError.textContent='候補者を選択するか、新規候補者を追加してください。'; candidateSelect.focus(); return }
+    // ===== Save =====
+    saveBtn.onclick = function(){
+      formError.style.display = 'none'; formError.textContent = '';
+      var cand = (candidateSelect.value || '').trim();
+      if(!cand){
+        formError.style.display = 'block';
+        formError.textContent = '候補者を選択するか、新規候補者を追加してください。';
+        candidateSelect.focus();
+        return;
+      }
       if(currentLoadedId){
-        const idx = sessions.findIndex(x=>x.id===currentLoadedId)
+        var idx = sessions.findIndex(function(x){ return x.id === currentLoadedId; });
         if(idx !== -1){
-          sessions[idx] = Object.assign({}, sessions[idx], {candidate:cand, goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value})
-          saveAll(sessions); alert('更新しました')
+          sessions[idx] = Object.assign({}, sessions[idx], {
+            candidate: cand, goal: goalEl.value, reality: realityEl.value,
+            options: optionsEl.value, will: willEl.value
+          });
+          saveAll(sessions);
+          showToast('更新しました');
         } else {
-          // fallback: create new
-          const s = {id:uid(),candidate:cand,goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value, created:Date.now()}
-          sessions.push(s); saveAll(sessions); alert('保存しました')
+          sessions.push({ id: uid(), candidate: cand, goal: goalEl.value, reality: realityEl.value, options: optionsEl.value, will: willEl.value, created: Date.now() });
+          saveAll(sessions);
+          showToast('保存しました');
         }
       } else {
-        const s = {id:uid(),candidate:cand,goal:goal.value, reality:reality.value, options:optionsEl.value, will:will.value, created:Date.now()}
-        sessions.push(s); saveAll(sessions); alert('保存しました')
+        sessions.push({ id: uid(), candidate: cand, goal: goalEl.value, reality: realityEl.value, options: optionsEl.value, will: willEl.value, created: Date.now() });
+        saveAll(sessions);
+        showToast('保存しました');
       }
-      renderCandidates(); candidateSelect.value=cand; renderSessions()
-    }
+      renderCandidates();
+      candidateSelect.value = cand;
+      renderSessions();
+    };
 
-    newSessionBtn.onclick = ()=>{
-      if(!confirm('フォームをクリアして新規にしますか？')) return
-      goal.value=''; reality.value=''; optionsEl.value=''; will.value=''; currentLoadedId = null; saveBtn.textContent = 'セッションを保存'
-    }
+    // ===== New Session =====
+    newSessionBtn.onclick = function(){
+      if(!confirm('フォームをクリアして新規にしますか？')) return;
+      goalEl.value = ''; realityEl.value = ''; optionsEl.value = ''; willEl.value = '';
+      currentLoadedId = null;
+      saveBtn.textContent = 'セッションを保存';
+    };
 
-    candidateSelect.onchange = ()=>{ renderSessions() }
+    // ===== Candidate Change =====
+    candidateSelect.onchange = function(){ renderSessions(); };
 
-    exportBtn.onclick = ()=>{
-      const dataStr = JSON.stringify(sessions, null, 2)
-      const blob = new Blob([dataStr], {type:'application/json'})
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a'); a.href=url; a.download='grow_sessions.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
-    }
+    // ===== Export JSON =====
+    exportBtn.onclick = function(){
+      var dataStr = JSON.stringify(sessions, null, 2);
+      var blob = new Blob([dataStr], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = 'grow_sessions.json';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    };
 
-    importBtn.onclick = ()=> importFile.click()
-    importFile.onchange = (e)=>{
-      const f = e.target.files[0]; if(!f) return;
-      const reader = new FileReader(); reader.onload = ()=>{
-        try{ const parsed = JSON.parse(reader.result); if(Array.isArray(parsed)){ sessions = sessions.concat(parsed); saveAll(sessions); renderCandidates(); renderSessions(); alert('インポート完了') }else alert('無効な形式です') }catch(err){ alert('読み込みエラー') }
-      }; reader.readAsText(f)
-      importFile.value=''
-    }
+    // ===== Import JSON =====
+    importBtn.onclick = function(){ importFile.click(); };
+    importFile.onchange = function(e){
+      var f = e.target.files[0]; if(!f) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        try {
+          var parsed = JSON.parse(reader.result);
+          if(Array.isArray(parsed)){
+            sessions = sessions.concat(parsed);
+            saveAll(sessions);
+            renderCandidates(); renderSessions();
+            showToast('インポート完了');
+          } else { alert('無効な形式です'); }
+        } catch(err){ alert('読み込みエラー'); }
+      };
+      reader.readAsText(f);
+      importFile.value = '';
+    };
 
-    // CSV export (filtered by selected candidate if any)
+    // ===== Export CSV =====
     function toCSV(rows){
-      const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"'
-      const header = ['id','candidate','created','goal','reality','options','will']
-      const lines = [header.join(',')]
-      rows.forEach(r=>{
-        const row = [r.id, r.candidate, new Date(r.created).toISOString(), r.goal, r.reality, r.options, r.will].map(esc).join(',')
-        lines.push(row)
-      })
-      return lines.join('\n')
+      var esc = function(v){ return '"' + String(v||'').replace(/"/g,'""') + '"'; };
+      var header = ['id','candidate','created','goal','reality','options','will'];
+      var lines = [header.join(',')];
+      rows.forEach(function(r){
+        lines.push([r.id, r.candidate, new Date(r.created).toISOString(), r.goal, r.reality, r.options, r.will].map(esc).join(','));
+      });
+      return lines.join('\n');
     }
+    exportCSVBtn.onclick = function(){
+      var sel = candidateSelect.value;
+      var rows = sel ? sessions.filter(function(s){ return s.candidate === sel; }) : sessions;
+      if(rows.length === 0) return alert('エクスポートするセッションがありません');
+      var csv = toCSV(rows);
+      var blob = new Blob([csv], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = 'grow_sessions.csv';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    };
 
-    exportCSVBtn.onclick = ()=>{
-      const sel = candidateSelect.value
-      const rows = sel? sessions.filter(s=>s.candidate===sel) : sessions
-      if(rows.length===0) return alert('エクスポートするセッションがありません')
-      const csv = toCSV(rows)
-      const blob = new Blob([csv], {type:'text/csv'})
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a'); a.href = url; a.download = 'grow_sessions.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
-    }
+    // ===== Print / PDF =====
+    printPdfBtn.onclick = function(){
+      var cand = (candidateSelect.value||'').trim();
+      var g = goalEl.value.trim();
+      var r = realityEl.value.trim();
+      var o = optionsEl.value.trim();
+      var wi = willEl.value.trim();
+      if(!cand && !g && !r && !o && !wi) return alert('印刷するフォーム内容がありません。フォームに入力してください。');
+      var w = window.open('','_blank');
+      var h = [];
+      h.push('<!doctype html><html><head><meta charset="utf-8"><title>GROW 印刷</title>');
+      h.push('<style>body{font-family:"Segoe UI",Arial,sans-serif;padding:28px 32px;color:#222} h1{font-size:20px;border-bottom:2px solid #e62429;padding-bottom:8px;color:#e62429} h3{margin:18px 0 6px;color:#333} .val{white-space:pre-wrap;padding:6px 0;line-height:1.7} .meta{color:#666;font-size:14px;margin-bottom:12px} .empty{color:#999;font-style:italic}</style>');
+      h.push('</head><body>');
+      h.push('<h1>GROWモデル ワークシート</h1>');
+      h.push('<div class="meta"><strong>候補者: </strong>' + (cand||'<span class="empty">未選択</span>') + '　　<strong>日時: </strong>' + new Date().toLocaleString() + '</div>');
+      h.push('<h3>Goal（目標）</h3><div class="val">' + (g ? g.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>');
+      h.push('<h3>Reality（現状）</h3><div class="val">' + (r ? r.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>');
+      h.push('<h3>Options（選択肢／活用案）</h3><div class="val">' + (o ? o.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>');
+      h.push('<h3>Will（次の行動）</h3><div class="val">' + (wi ? wi.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>');
+      h.push('</body></html>');
+      w.document.open(); w.document.write(h.join(''));
+      w.document.close();
+      setTimeout(function(){ w.focus(); w.print(); }, 350);
+    };
 
-    // Print / PDF: 現在のフォーム入力内容を印刷
-    printPdfBtn.onclick = ()=>{
-      const cand = (candidateSelect.value||'').trim()
-      const g = goal.value.trim()
-      const r = reality.value.trim()
-      const o = optionsEl.value.trim()
-      const wi = will.value.trim()
-      if(!cand && !g && !r && !o && !wi) return alert('印刷するフォーム内容がありません。フォームに入力してください。')
-      const w = window.open('', '_blank')
-      const html = []
-      html.push('<!doctype html><html><head><meta charset="utf-8"><title>GROW 印刷</title>')
-      html.push('<style>body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;padding:28px 32px;color:#222} h1{font-size:20px;border-bottom:2px solid #4f8cff;padding-bottom:8px;color:#4f8cff} h3{margin:18px 0 6px;color:#333} .val{white-space:pre-wrap;padding:6px 0;line-height:1.7} .meta{color:#666;font-size:14px;margin-bottom:12px} .empty{color:#999;font-style:italic}</style>')
-      html.push('</head><body>')
-      html.push('<h1>GROWモデル ワークシート</h1>')
-      html.push('<div class="meta"><strong>候補者: </strong>' + (cand || '<span class="empty">未選択</span>') + '　　<strong>日時: </strong>' + new Date().toLocaleString() + '</div>')
-      html.push('<h3>Goal（目標）</h3><div class="val">' + (g ? g.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
-      html.push('<h3>Reality（現状）</h3><div class="val">' + (r ? r.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
-      html.push('<h3>Options（選択肢／活用案）</h3><div class="val">' + (o ? o.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
-      html.push('<h3>Will（次の行動）</h3><div class="val">' + (wi ? wi.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
-      html.push('</body></html>')
-      w.document.open(); w.document.write(html.join(''))
-      w.document.close()
-      setTimeout(()=>{ w.focus(); w.print(); }, 350)
-    }
-
-    // ステップ式フォームアニメーション
-    const growFormPanel = document.getElementById('growFormPanel');
-    const openFormBtn = document.getElementById('openFormBtn');
-    let formOpen = false;
-    let currentStep = 0;
-    const stepPanels = [];
-    function showStep(idx) {
-      stepPanels.forEach((el, i) => {
-        if(i === idx) {
+    // ===== Step Form Animation =====
+    function showStep(idx){
+      stepPanels.forEach(function(el, i){
+        if(i === idx){
           el.style.display = '';
-          setTimeout(()=>el.classList.add('active'), 10);
+          setTimeout(function(){ el.classList.add('active'); }, 10);
         } else {
           el.classList.remove('active');
-          setTimeout(()=>el.style.display = 'none', 400);
+          setTimeout(function(){ el.style.display = 'none'; }, 400);
         }
       });
       currentStep = idx;
     }
-    function openGrowForm() {
+    function openGrowForm(){
       if(formOpen) return;
-      growFormPanel.style.maxHeight = growFormPanel.scrollHeight + 120 + 'px';
-      growFormPanel.style.opacity = 1;
+      growFormPanel.style.overflow = 'hidden';
+      growFormPanel.style.maxHeight = (growFormPanel.scrollHeight + 400) + 'px';
+      growFormPanel.style.opacity = '1';
       formOpen = true;
       showStep(0);
+      setTimeout(function(){ growFormPanel.style.overflow = 'visible'; }, 750);
     }
-    function closeGrowForm() {
+    function closeGrowForm(){
+      growFormPanel.style.overflow = 'hidden';
       growFormPanel.style.maxHeight = '0';
-      growFormPanel.style.opacity = 0;
+      growFormPanel.style.opacity = '0';
       formOpen = false;
-      stepPanels.forEach(el=>{el.classList.remove('active'); el.style.display='none';});
+      stepPanels.forEach(function(el){ el.classList.remove('active'); el.style.display = 'none'; });
     }
     if(openFormBtn) openFormBtn.onclick = openGrowForm;
-    // ステップパネル取得
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const panels = document.querySelectorAll('.step-panel');
-      panels.forEach(p=>stepPanels.push(p));
-      closeGrowForm();
-      // 次へボタン
-      document.querySelectorAll('.next-btn').forEach((btn, idx)=>{
-        btn.onclick = ()=>{
-          if(idx < stepPanels.length-1) showStep(idx+1);
-        };
-      });
-    });
-    // try button behavior
-    const tryBtn = document.getElementById('tryBtn')
-    if(tryBtn){ tryBtn.onclick = ()=>{ newCandidate.focus(); newCandidate.value=''; newCandidate.classList.add('pulse'); setTimeout(()=>newCandidate.classList.remove('pulse'),900) } }
 
-    // small pulse animation for focus
-    const s = document.createElement('style')
-    s.textContent = `@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}} .pulse{animation:pulse .85s ease-in-out}`
-    document.head.appendChild(s)
-
-    // ripple effect for buttons
-    function createRipple(e){
-      const el = e.currentTarget
-      const rect = el.getBoundingClientRect()
-      const r = document.createElement('span')
-      r.className = 'ripple'
-      const size = Math.max(rect.width, rect.height)
-      r.style.width = r.style.height = size + 'px'
-      r.style.left = (e.clientX - rect.left - size/2) + 'px'
-      r.style.top = (e.clientY - rect.top - size/2) + 'px'
-      el.appendChild(r)
-      r.style.animation = 'ripple .6s linear'
-      setTimeout(()=> r.remove(), 650)
+    // ===== Toast =====
+    var toastEl = document.createElement('div');
+    toastEl.id = 'toast';
+    document.body.appendChild(toastEl);
+    function showToast(msg, ms){
+      ms = ms || 1800;
+      toastEl.textContent = msg;
+      toastEl.style.display = 'block';
+      toastEl.style.opacity = '1';
+      setTimeout(function(){
+        toastEl.style.opacity = '0';
+        setTimeout(function(){ toastEl.style.display = 'none'; }, 350);
+      }, ms);
     }
-    document.querySelectorAll('.btn, .secondary, .tryBtn').forEach(b=> b.addEventListener('click', createRipple))
 
-    // toast helper
-    const toast = document.createElement('div'); toast.id='toast'; document.body.appendChild(toast)
-    function showToast(msg, ms=1400){ toast.textContent = msg; toast.style.display='block'; toast.style.opacity=''; setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.style.display='none', 350) }, ms) }
+    // ===== Ripple Effect =====
+    function createRipple(e){
+      var el = e.currentTarget;
+      var rect = el.getBoundingClientRect();
+      var r = document.createElement('span');
+      r.className = 'ripple';
+      var size = Math.max(rect.width, rect.height);
+      r.style.width = r.style.height = size + 'px';
+      r.style.left = (e.clientX - rect.left - size/2) + 'px';
+      r.style.top = (e.clientY - rect.top - size/2) + 'px';
+      el.appendChild(r);
+      r.style.animation = 'ripple .6s linear';
+      setTimeout(function(){ r.remove(); }, 650);
+    }
+    document.querySelectorAll('.btn, .secondary').forEach(function(b){
+      b.addEventListener('click', createRipple);
+    });
 
-    // show toast on save instead of alert
-    const origSave = saveBtn.onclick
-    saveBtn.addEventListener('click', ()=>{
-      // small delay to allow existing handler to run and save
-      setTimeout(()=> showToast('保存しました'), 350)
-    })
-
-    // show toast on update via modal save
-    if(modalSave) modalSave.addEventListener('click', ()=> setTimeout(()=> showToast('編集内容を保存しました'), 350))
-
-    // === Iron Man HUD Canvas Animation ===
+    // ===== HUD Canvas Animation =====
     (function(){
-      const canvas = document.getElementById('hudCanvas');
+      var canvas = document.getElementById('hudCanvas');
       if(!canvas) return;
       canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;';
-      const ctx = canvas.getContext('2d');
-      let w, h;
+      var ctx = canvas.getContext('2d');
+      var w, h;
       function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
       resize(); window.addEventListener('resize', resize);
-      // particles
-      const particles = [];
-      for(let i=0;i<50;i++){
+      var particles = [];
+      for(var i=0; i<50; i++){
         particles.push({
           x: Math.random()*2000, y: Math.random()*2000,
           vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
@@ -855,13 +876,11 @@
       }
       function draw(){
         ctx.clearRect(0,0,w,h);
-        // grid lines
         ctx.strokeStyle = 'rgba(240,192,64,0.02)';
         ctx.lineWidth = 0.5;
-        for(let x=0;x<w;x+=80){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
-        for(let y=0;y<h;y+=80){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
-        // particles
-        particles.forEach(p=>{
+        for(var x=0; x<w; x+=80){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+        for(var y=0; y<h; y+=80){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+        particles.forEach(function(p){
           p.x += p.vx; p.y += p.vy;
           if(p.x<0) p.x=w; if(p.x>w) p.x=0;
           if(p.y<0) p.y=h; if(p.y>h) p.y=0;
@@ -870,11 +889,10 @@
           ctx.fillStyle = p.color + (0.25+Math.random()*0.15) + ')';
           ctx.fill();
         });
-        // connection lines
-        for(let i=0;i<particles.length;i++){
-          for(let j=i+1;j<particles.length;j++){
-            const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-            const dist=Math.sqrt(dx*dx+dy*dy);
+        for(var i=0; i<particles.length; i++){
+          for(var j=i+1; j<particles.length; j++){
+            var dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+            var dist=Math.sqrt(dx*dx+dy*dy);
             if(dist<120){
               ctx.beginPath();
               ctx.moveTo(particles[i].x, particles[i].y);
@@ -890,12 +908,39 @@
       draw();
     })();
 
-    // トップへボタン：ページリロード
-    const reloadBtn = document.getElementById('reloadBtn')
-    if(reloadBtn){ reloadBtn.onclick = ()=> location.reload() }
+    // ===== Init (DOMContentLoaded) =====
+    document.addEventListener('DOMContentLoaded', function(){
+      var panels = document.querySelectorAll('.step-panel');
+      panels.forEach(function(p){ stepPanels.push(p); });
+      closeGrowForm();
+      // "次へ" buttons
+      document.querySelectorAll('.next-btn').forEach(function(btn, idx){
+        btn.onclick = function(){
+          if(idx < stepPanels.length - 1) showStep(idx + 1);
+        };
+      });
+      // Initial render
+      renderCandidates();
+      renderSessions();
+      console.log('[GROW] DOM ready. Candidates rendered. Sessions:', sessions.length);
+    });
 
-    // 初期レンダリング
-    renderCandidates(); renderSessions()
+    // Fallback: if DOMContentLoaded already fired, run init immediately
+    if(document.readyState !== 'loading'){
+      var panels = document.querySelectorAll('.step-panel');
+      panels.forEach(function(p){ if(!stepPanels.includes(p)) stepPanels.push(p); });
+      if(stepPanels.length > 0) closeGrowForm();
+      document.querySelectorAll('.next-btn').forEach(function(btn, idx){
+        btn.onclick = function(){
+          if(idx < stepPanels.length - 1) showStep(idx + 1);
+        };
+      });
+      renderCandidates();
+      renderSessions();
+      console.log('[GROW] Fallback init ran. readyState:', document.readyState);
+    }
+
+  })();
   </script>
 </body>
 </html>
