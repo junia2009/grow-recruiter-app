@@ -262,15 +262,13 @@
       <div>
         <h1>GROWモデル ワークシート</h1>
         <div class="subtitle">目標達成に向けて現状を整理し、具体的な行動を検討するためのシンプルなワークシートです。</div>
-        <p style="margin-top:18px"><button id="openFormBtn" class="btn" type="button">フォームを開く</button></p>
+              <p style="margin-top:18px; display:flex; gap:12px; align-items:center;">
+                <button id="openFormBtn" class="btn" type="button">フォームを開く</button>
+                <button id="reloadBtn" class="btn secondary" type="button">トップへボタン</button>
+              </p>
       </div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-        <div style="color:var(--muted);font-size:13px">テーマ</div>
-        <select id="themeSelect" class="theme-select" aria-label="テーマ選択">
-          <option value="default">デフォルト</option>
-          <option value="warm">ウォーム</option>
-          <option value="dark">ダーク</option>
-        </select>
+        <!-- テーマ選択UI削除 -->
       </div>
     </div>
 
@@ -368,75 +366,7 @@
       </div>
     </div>
 
-    <footer>
-      <div>保存方法: ブラウザのローカル保存（ローカル環境/プライバシー配慮）</div>
-      <div style="margin-top:6px">使い方: 候補者を追加 → G/R/O/W を入力 → 「セッションを保存」</div>
-    </footer>
-  </div>
-
   <script>
-    // ステップ式フォームアニメーション
-    document.addEventListener('DOMContentLoaded', () => {
-      const growFormPanel = document.getElementById('growFormPanel');
-      const openFormBtn = document.getElementById('openFormBtn');
-      let formOpen = false;
-      window.currentStep = 0;
-      const stepPanels = Array.from(document.querySelectorAll('.step-panel'));
-      function showStep(idx) {
-        stepPanels.forEach((el, i) => {
-          if(i === idx) {
-            el.style.display = '';
-            setTimeout(()=>el.classList.add('active'), 10);
-          } else {
-            el.classList.remove('active');
-            setTimeout(()=>el.style.display = 'none', 400);
-          }
-        });
-        window.currentStep = idx;
-      }
-      function openGrowForm() {
-        if(formOpen) return;
-        growFormPanel.style.maxHeight = growFormPanel.scrollHeight + 120 + 'px';
-        growFormPanel.style.opacity = 1;
-        formOpen = true;
-        showStep(0);
-      }
-      function closeGrowForm() {
-        growFormPanel.style.maxHeight = '0';
-        growFormPanel.style.opacity = 0;
-        formOpen = false;
-        stepPanels.forEach(el=>{el.classList.remove('active'); el.style.display='none';});
-      }
-      if(openFormBtn) openFormBtn.onclick = openGrowForm;
-      closeGrowForm();
-      // ステップインジケーター描画
-      const stepIndicator = document.getElementById('stepIndicator');
-      function renderStepIndicator(idx) {
-        stepIndicator.innerHTML = '';
-        for(let i=0;i<stepPanels.length;i++){
-          const dot = document.createElement('span');
-          dot.className = 'step-dot' + (i===idx ? ' active' : i<idx ? ' done' : '');
-          stepIndicator.appendChild(dot);
-          if(i<stepPanels.length-1){
-            const arrow = document.createElement('span');
-            arrow.textContent = '→';
-            arrow.style.margin = '0 4px';
-            stepIndicator.appendChild(arrow);
-          }
-        }
-      }
-      // 次へボタン
-      document.querySelectorAll('.next-btn').forEach((btn)=>{
-        btn.onclick = ()=>{
-          if(window.currentStep < stepPanels.length-1) showStep(window.currentStep + 1);
-        };
-      });
-      // 戻るボタン
-      // ステップ切り替え時にインジケーターも更新
-      const origShowStep = showStep;
-      showStep = function(idx){ origShowStep(idx); renderStepIndicator(idx); };
-      renderStepIndicator(0);
-    });
     const KEY = 'grow_sessions_v1'
     function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 
@@ -726,30 +656,28 @@
       const a = document.createElement('a'); a.href = url; a.download = 'grow_sessions.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
     }
 
-    // Print / PDF: open printable window and call print
+    // Print / PDF: 現在のフォーム入力内容を印刷
     printPdfBtn.onclick = ()=>{
-      const sel = candidateSelect.value
-      const rows = sel? sessions.filter(s=>s.candidate===sel) : sessions
-      if(rows.length===0) return alert('印刷するセッションがありません')
+      const cand = (candidateSelect.value||'').trim()
+      const g = goal.value.trim()
+      const r = reality.value.trim()
+      const o = optionsEl.value.trim()
+      const wi = will.value.trim()
+      if(!cand && !g && !r && !o && !wi) return alert('印刷するフォーム内容がありません。フォームに入力してください。')
       const w = window.open('', '_blank')
       const html = []
       html.push('<!doctype html><html><head><meta charset="utf-8"><title>GROW 印刷</title>')
-      html.push('<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px} h1{font-size:18px} .item{border-bottom:1px solid #ddd;padding:12px 0} .meta{color:#666;font-size:13px}</style>')
+      html.push('<style>body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;padding:28px 32px;color:#222} h1{font-size:20px;border-bottom:2px solid #4f8cff;padding-bottom:8px;color:#4f8cff} h3{margin:18px 0 6px;color:#333} .val{white-space:pre-wrap;padding:6px 0;line-height:1.7} .meta{color:#666;font-size:14px;margin-bottom:12px} .empty{color:#999;font-style:italic}</style>')
       html.push('</head><body>')
-      html.push('<h1>GROW セッション（印刷）</h1>')
-      rows.sort((a,b)=>a.created-b.created).forEach(r=>{
-        html.push('<div class="item">')
-        html.push('<div class="meta"><strong>' + (r.candidate||'') + '</strong> — ' + new Date(r.created).toLocaleString() + '</div>')
-        html.push('<h3>Goal</h3><div>' + (r.goal? r.goal.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
-        html.push('<h3>Reality</h3><div>' + (r.reality? r.reality.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
-        html.push('<h3>Options</h3><div>' + (r.options? r.options.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
-        html.push('<h3>Will</h3><div>' + (r.will? r.will.replace(/\n/g,'<br>') : '<i>（未入力）</i>') + '</div>')
-        html.push('</div>')
-      })
+      html.push('<h1>GROWモデル ワークシート</h1>')
+      html.push('<div class="meta"><strong>候補者: </strong>' + (cand || '<span class="empty">未選択</span>') + '　　<strong>日時: </strong>' + new Date().toLocaleString() + '</div>')
+      html.push('<h3>Goal（目標）</h3><div class="val">' + (g ? g.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
+      html.push('<h3>Reality（現状）</h3><div class="val">' + (r ? r.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
+      html.push('<h3>Options（選択肢／活用案）</h3><div class="val">' + (o ? o.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
+      html.push('<h3>Will（次の行動）</h3><div class="val">' + (wi ? wi.replace(/\n/g,'<br>') : '<span class="empty">（未入力）</span>') + '</div>')
       html.push('</body></html>')
       w.document.open(); w.document.write(html.join(''))
       w.document.close()
-      // give browser a moment to render
       setTimeout(()=>{ w.focus(); w.print(); }, 350)
     }
 
@@ -836,66 +764,13 @@
     // show toast on update via modal save
     if(modalSave) modalSave.addEventListener('click', ()=> setTimeout(()=> showToast('編集内容を保存しました'), 350))
 
-    // Theme presets
-    const THEMES = {
-      default: {
-        '--bg': '#f3f8ff',
-        '--card': '#ffffff',
-        '--accent': '#0b76ff',
-        '--muted': '#66788a',
-        '--text': '#0b2340',
-        '--border': '#e1ebfb',
-        '--input-bg': '#fbfdff',
-        '--input-border': '#e1ebfb',
-        '--input-focus': '#0b76ff22',
-        '--btn-hover': '#0b2340',
-        '--secondary': '#eef6ff',
-        '--label': '#1a2333',
-      },
-      warm: {
-        '--bg': '#fff7f0',
-        '--card': '#fff6f2',
-        '--accent': '#ff6b35',
-        '--muted': '#8a6b5b',
-        '--text': '#3a2416',
-        '--border': '#ffe3c6',
-        '--input-bg': '#fff9f4',
-        '--input-border': '#ffe3c6',
-        '--input-focus': '#ff6b3522',
-        '--btn-hover': '#b84a1b',
-        '--secondary': '#ffe3c6',
-        '--label': '#6b3a1a',
-      },
-      dark: {
-        '--bg': '#181a1b',
-        '--card': '#232526',
-        '--accent': '#4f8cff',
-        '--muted': '#a0a4ab',
-        '--text': '#f3f6fa',
-        '--border': '#313336',
-        '--input-bg': '#23272b',
-        '--input-border': '#35383b',
-        '--input-focus': '#4f8cff44',
-        '--btn-hover': '#3a5ca8',
-        '--secondary': '#23272b',
-        '--label': '#e0e3e8',
-      }
-    }
-    function applyTheme(name){
-      const t = THEMES[name] || THEMES.default
-      Object.keys(t).forEach(k=>document.documentElement.style.setProperty(k,t[k]))
-      // body背景
-      if(name==='dark') document.body.style.background = 'linear-gradient(180deg,#071021 0%, #181a1b 100%)'
-      else if(name==='warm') document.body.style.background = 'linear-gradient(180deg,#fff3e6 0%, #fff7f0 100%)'
-      else document.body.style.background = 'linear-gradient(180deg,#f7fbff 0%, #f3f8ff 100%)'
-      // 主要なテキスト色もbodyに反映
-      document.body.style.color = t['--text']
-    }
-    // load saved theme
-    const saved = localStorage.getItem('grow_theme') || 'default'
-    themeSelect.value = saved
-    applyTheme(saved)
-    themeSelect.onchange = ()=>{ localStorage.setItem('grow_theme', themeSelect.value); applyTheme(themeSelect.value) }
+    // テーマ関連JS削除（ダーク固定）
+    document.body.style.background = 'linear-gradient(180deg,#071021 0%, #181a1b 100%)';
+    document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text');
+
+    // トップへボタン：ページリロード
+    const reloadBtn = document.getElementById('reloadBtn')
+    if(reloadBtn){ reloadBtn.onclick = ()=> location.reload() }
 
     // 初期レンダリング
     renderCandidates(); renderSessions()
