@@ -18,20 +18,21 @@
       @keyframes fadein-move { to { opacity: 1; transform: none; } }
       @keyframes slidein-move { to { opacity: 1; transform: none; } }
     :root {
-      --bg: #181a1b;
-      --card: #232526;
-      --accent: #4f8cff;
-      --muted: #a0a4ab;
-      --text: #f3f6fa;
-      --border: #313336;
-      --label: #e0e3e8;
-      --shadow: 0 8px 32px rgba(0,0,0,0.18);
+      --bg: #0a0a0f;
+      --card: rgba(18,18,28,0.92);
+      --accent: #e62429;
+      --accent-gold: #f0c040;
+      --muted: #8a8e97;
+      --text: #f0eee8;
+      --border: #2a1a1a;
+      --label: #f0c040;
+      --shadow: 0 8px 40px rgba(230,36,41,0.12);
       --radius: 14px;
-      --input-bg: #23272b;
-      --input-border: #35383b;
-      --input-focus: #4f8cff44;
-      --btn-hover: #3a5ca8;
-      --secondary: #23272b;
+      --input-bg: #141420;
+      --input-border: #3a2020;
+      --input-focus: rgba(230,36,41,0.25);
+      --btn-hover: #b91c20;
+      --secondary: #1a1a28;
     }
     html,body { height: 100%; }
     body {
@@ -41,22 +42,58 @@
       color: var(--text);
       min-height: 100vh;
       letter-spacing: 0.01em;
+      overflow-x: hidden;
     }
+    /* === Iron Man HUD Background === */
+    #hud-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    #hud-bg canvas { width: 100%; height: 100%; }
+    .arc-reactor {
+      position: fixed;
+      top: 50%; left: 50%;
+      width: 420px; height: 420px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,200,255,0.07) 0%, rgba(79,200,255,0.02) 40%, transparent 70%);
+      box-shadow: 0 0 120px 40px rgba(79,200,255,0.04), inset 0 0 80px 20px rgba(79,200,255,0.03);
+      animation: arc-pulse 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes arc-pulse {
+      0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+      50% { opacity: 0.8; transform: translate(-50%,-50%) scale(1.08); }
+    }
+    .hud-ring {
+      position: fixed;
+      top: 50%; left: 50%;
+      border-radius: 50%;
+      border: 1px solid rgba(240,192,64,0.08);
+      pointer-events: none; z-index: 0;
+    }
+    .hud-ring-1 { width: 600px; height: 600px; transform: translate(-50%,-50%); animation: hud-spin 60s linear infinite; }
+    .hud-ring-2 { width: 500px; height: 500px; transform: translate(-50%,-50%); animation: hud-spin 45s linear infinite reverse; border-color: rgba(230,36,41,0.06); }
+    .hud-ring-3 { width: 320px; height: 320px; transform: translate(-50%,-50%); animation: hud-spin 30s linear infinite; border-color: rgba(79,200,255,0.06); }
+    @keyframes hud-spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
     .container {
+      position: relative; z-index: 1;
       max-width: 820px;
       margin: 36px auto 0 auto;
       background: var(--card);
       padding: 36px 32px 28px 32px;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow), 0 0 60px rgba(230,36,41,0.06);
       border: 1.5px solid var(--border);
+      backdrop-filter: blur(12px);
     }
     h1 {
       font-size: 2.1rem;
       margin: 0 0 8px;
       color: var(--accent);
       font-weight: 700;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 20px rgba(230,36,41,0.3), 0 0 40px rgba(230,36,41,0.1);
     }
     .subtitle {
       color: var(--muted);
@@ -95,32 +132,33 @@
       padding: 11px 22px;
       border-radius: 10px;
       border: none;
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent) 0%, #c41e22 100%);
       color: #fff;
       font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
       transition: background .14s, transform .12s, box-shadow .12s;
-      box-shadow: 0 2px 12px rgba(79,140,255,0.10);
+      box-shadow: 0 2px 16px rgba(230,36,41,0.18);
       letter-spacing: 0.01em;
     }
     .btn:hover {
       background: var(--btn-hover);
       transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 8px 24px rgba(79,140,255,0.18);
+      box-shadow: 0 8px 24px rgba(230,36,41,0.25), 0 0 16px rgba(230,36,41,0.15);
     }
     .secondary {
       background: var(--secondary);
-      color: var(--accent);
+      color: var(--accent-gold);
       border: 1.5px solid var(--input-border);
       font-weight: 500;
       margin-top: 14px;
       transition: background .14s, color .14s, border-color .14s;
     }
     .secondary:hover {
-      background: #232c3a;
+      background: #1e1420;
       color: #fff;
-      border-color: var(--accent);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 12px rgba(240,192,64,0.12);
     }
     .sessions {
       margin-top: 28px;
@@ -129,18 +167,18 @@
     .session-item {
       padding: 16px 18px;
       border-radius: 10px;
-      background: linear-gradient(90deg,#23272b 60%,#232526 100%);
+      background: linear-gradient(90deg,#12121e 60%,#1a1428 100%);
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 5px 18px rgba(0,0,0,0.10);
+      box-shadow: 0 5px 18px rgba(0,0,0,0.15);
       border: 1.2px solid var(--input-border);
       transition: transform .12s, box-shadow .12s, border-color .14s;
     }
     .session-item:hover {
       transform: translateY(-4px) scale(1.01);
-      box-shadow: 0 18px 40px rgba(79,140,255,0.10);
+      box-shadow: 0 18px 40px rgba(230,36,41,0.10), 0 0 20px rgba(240,192,64,0.06);
       border-color: var(--accent);
     }
     .actions button {
@@ -171,10 +209,10 @@
       gap: 24px;
       padding: 22px 18px 18px 18px;
       border-radius: var(--radius);
-      background: linear-gradient(90deg,#23272b 60%,#232526 100%);
+      background: linear-gradient(135deg,#12121e 0%,#1a0a0a 50%,#12121e 100%);
       margin-bottom: 22px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-      border: 1.2px solid var(--input-border);
+      box-shadow: 0 4px 24px rgba(230,36,41,0.08), 0 0 60px rgba(230,36,41,0.04);
+      border: 1.2px solid rgba(230,36,41,0.15);
     }
     .hero .lead {
       font-weight: 700;
@@ -186,8 +224,8 @@
     }
     .tryBtn {
       background: transparent;
-      border: 1.5px solid var(--accent);
-      color: var(--accent);
+      border: 1.5px solid var(--accent-gold);
+      color: var(--accent-gold);
       padding: 9px 16px;
       border-radius: 10px;
       font-weight: 600;
@@ -195,8 +233,8 @@
       transition: background .14s, color .14s, border-color .14s;
     }
     .tryBtn:hover {
-      background: var(--accent);
-      color: #fff;
+      background: var(--accent-gold);
+      color: #0a0a0f;
       border-color: #fff;
     }
     /* Modal styles */
@@ -247,16 +285,48 @@
     /* toast */
     #toast {
       position: fixed; right: 20px; bottom: 24px;
-      background: var(--accent); color: #fff;
+      background: linear-gradient(135deg, var(--accent) 0%, #c41e22 100%);
+      color: #fff;
       padding: 12px 18px; border-radius: 10px;
-      box-shadow: 0 8px 30px rgba(79,140,255,0.18);
+      box-shadow: 0 8px 30px rgba(230,36,41,0.25);
       display: none;
       font-size: 1rem;
       z-index: 2000;
     }
+    /* HUD scan line */
+    .hud-scanline {
+      position: fixed; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(79,200,255,0.08) 30%, rgba(240,192,64,0.06) 70%, transparent 100%);
+      z-index: 0; pointer-events: none;
+      animation: scanline 8s linear infinite;
+    }
+    @keyframes scanline {
+      0% { top: -2px; }
+      100% { top: 100vh; }
+    }
+    /* Corner HUD decorations */
+    .hud-corner {
+      position: fixed; width: 60px; height: 60px;
+      pointer-events: none; z-index: 0; opacity: 0.15;
+    }
+    .hud-corner-tl { top: 16px; left: 16px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+    .hud-corner-tr { top: 16px; right: 16px; border-top: 2px solid var(--accent-gold); border-right: 2px solid var(--accent-gold); }
+    .hud-corner-bl { bottom: 16px; left: 16px; border-bottom: 2px solid var(--accent-gold); border-left: 2px solid var(--accent-gold); }
+    .hud-corner-br { bottom: 16px; right: 16px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
   </style>
 </head>
 <body>
+  <!-- Iron Man HUD Background -->
+  <div class="arc-reactor"></div>
+  <div class="hud-ring hud-ring-1"></div>
+  <div class="hud-ring hud-ring-2"></div>
+  <div class="hud-ring hud-ring-3"></div>
+  <div class="hud-scanline"></div>
+  <div class="hud-corner hud-corner-tl"></div>
+  <div class="hud-corner hud-corner-tr"></div>
+  <div class="hud-corner hud-corner-bl"></div>
+  <div class="hud-corner hud-corner-br"></div>
+  <canvas id="hudCanvas"></canvas>
   <div class="container fadein">
     <div class="hero slidein">
       <div>
@@ -764,9 +834,61 @@
     // show toast on update via modal save
     if(modalSave) modalSave.addEventListener('click', ()=> setTimeout(()=> showToast('編集内容を保存しました'), 350))
 
-    // テーマ関連JS削除（ダーク固定）
-    document.body.style.background = 'linear-gradient(180deg,#071021 0%, #181a1b 100%)';
-    document.body.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text');
+    // === Iron Man HUD Canvas Animation ===
+    (function(){
+      const canvas = document.getElementById('hudCanvas');
+      if(!canvas) return;
+      canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;';
+      const ctx = canvas.getContext('2d');
+      let w, h;
+      function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+      resize(); window.addEventListener('resize', resize);
+      // particles
+      const particles = [];
+      for(let i=0;i<50;i++){
+        particles.push({
+          x: Math.random()*2000, y: Math.random()*2000,
+          vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+          r: Math.random()*1.5+0.5,
+          color: Math.random()>0.6 ? 'rgba(240,192,64,' : 'rgba(230,36,41,'
+        });
+      }
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        // grid lines
+        ctx.strokeStyle = 'rgba(240,192,64,0.02)';
+        ctx.lineWidth = 0.5;
+        for(let x=0;x<w;x+=80){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+        for(let y=0;y<h;y+=80){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+        // particles
+        particles.forEach(p=>{
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0) p.x=w; if(p.x>w) p.x=0;
+          if(p.y<0) p.y=h; if(p.y>h) p.y=0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+          ctx.fillStyle = p.color + (0.25+Math.random()*0.15) + ')';
+          ctx.fill();
+        });
+        // connection lines
+        for(let i=0;i<particles.length;i++){
+          for(let j=i+1;j<particles.length;j++){
+            const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+            const dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist<120){
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = 'rgba(230,36,41,'+(0.06*(1-dist/120))+')';
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
 
     // トップへボタン：ページリロード
     const reloadBtn = document.getElementById('reloadBtn')
